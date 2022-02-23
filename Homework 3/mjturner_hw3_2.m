@@ -3,8 +3,7 @@
 
 clear, clc, close all;
 
-%% Generate Gaussian data:
-% Add code below:
+%% 3.2 Generate Gaussian data and Implement k-means:
 
 % Intializing mean vectors
 mu1 = [2, 2]';
@@ -21,6 +20,17 @@ sigma3 = 0.07 .* identityMatrix;
 gaussian1 = mvnrnd(mu1,sigma1,50);
 gaussian2 = mvnrnd(mu2,sigma2,50);
 gaussian3 = mvnrnd(mu3,sigma3,50);
+
+% Create Scatter Plot
+% First Gaussian Data
+scatter(gaussian1(:,1), gaussian1(:, 2), 'r');
+hold on
+scatter(gaussian2(:,1), gaussian2(:, 2), 'g');
+hold on
+scatter(gaussian3(:,1), gaussian3(:, 2), 'b');
+
+% label axis and include title
+title('My Gaussian Data')
 
 % %% Generate NBA data:
 % % Add code below:

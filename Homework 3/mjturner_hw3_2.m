@@ -3,7 +3,7 @@
 
 clear, clc, close all;
 
-%% 3.2 Generate Gaussian data and Implement k-means:
+%% 3.2a Generate Gaussian data and Implement k-means:
 
 % Intializing mean vectors
 mu1 = [2, 2]';
@@ -32,7 +32,7 @@ scatter(gaussian3(:,1), gaussian3(:, 2), 'b');
 % label axis and include title
 title('My Gaussian Data')
 
-% %% Generate NBA data:
+%% Generate NBA data:
 % % Add code below:
 % 
 % % HINT: readmatrix might be useful here
@@ -40,27 +40,26 @@ title('My Gaussian Data')
 % % Problem 3.2(f): Generate Concentric Rings Dataset using
 % % sample_circle.m provided to you in the HW 3 folder on Blackboard.
 % 
-% %% K-Means implementation
-% % Add code below
-% 
-% K =
-% MU_init = 
-% 
-% MU_previous = MU_init;
-% MU_current = MU_init;
-% 
-% % initializations
-% labels = ones(length(DATA),1);
-% converged = 0;
-% iteration = 0;
-% convergence_threshold = 0.025;
-% 
-% while (converged==0)
-%     iteration = iteration + 1;
-%     fprintf('Iteration: %d\n',iteration)
-% 
-%     %% CODE - Assignment Step - Assign each data observation to the cluster with the nearest mean:
-%     % Write code below here:
+%% K-Means implementation
+
+k = 3;
+MU_init = [3 3; -4 -1; 2 -4];
+
+MU_previous = MU_init;
+MU_current = MU_init;
+
+% initializations
+labels = ones(length(DATA),1);
+converged = 0;
+iteration = 0;
+convergence_threshold = 0.025;
+
+while (converged==0)
+     iteration = iteration + 1;
+     fprintf('Iteration: %d\n',iteration)
+ 
+     %% CODE - Assignment Step - Assign each data observation to the cluster with the nearest mean:
+     % Write code below here:
 %     
 %     %% CODE - Mean Updating - Update the cluster means
 %     % Write code below here:
@@ -86,7 +85,4 @@ title('My Gaussian Data')
 %     end
 %     
 %     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% end
-% 
-% 
-% 
+end 

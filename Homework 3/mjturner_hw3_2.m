@@ -23,6 +23,7 @@ gaussian3 = mvnrnd(mu3,sigma3,50);
 
 % Create Scatter Plot
 % First Gaussian Data
+% figure
 scatter(gaussian1(:,1), gaussian1(:, 2), 'r');
 hold on
 scatter(gaussian2(:,1), gaussian2(:, 2), 'g');
@@ -49,14 +50,15 @@ MU_previous = MU_init;
 MU_current = MU_init;
 
 % initializations
+DATA = [gaussian1; gaussian2;  gaussian3];
 labels = ones(length(DATA),1);
 converged = 0;
 iteration = 0;
 convergence_threshold = 0.025;
 
-while (converged==0)
-     iteration = iteration + 1;
-     fprintf('Iteration: %d\n',iteration)
+ while (converged==0)
+      iteration = iteration + 1;
+      fprintf('Iteration: %d\n',iteration)
  
      %% CODE - Assignment Step - Assign each data observation to the cluster with the nearest mean:
      % Write code below here:
@@ -85,4 +87,4 @@ while (converged==0)
 %     end
 %     
 %     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-end 
+end  

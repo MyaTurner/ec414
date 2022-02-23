@@ -8,7 +8,7 @@ distanceFrom_mu = euclideanDistance(dataMatrix, MU_init);
 % Find the minimum distance and assign the data point the appropiate label
 % in labels vector
 num_datapoints = length(distanceFrom_mu);
-labels = ones(num_datapoints,1);
+labels = zeros(num_datapoints,1);
 
 % Finds minimum distance in each distance matrix row
 minDistancefrom_mu = min(distanceFrom_mu,[],2);

@@ -23,6 +23,7 @@ gaussian3 = mvnrnd(mu3,sigma3,50);
 
 % Create Scatter Plot
 % First Gaussian Data
+% figure
 scatter(gaussian1(:,1), gaussian1(:, 2), 'r');
 hold on
 scatter(gaussian2(:,1), gaussian2(:, 2), 'g');
@@ -41,39 +42,34 @@ title('My Gaussian Data')
 % % sample_circle.m provided to you in the HW 3 folder on Blackboard.
 % 
 %% K-Means implementation
-% Starting k-means algorithm
-mu1_initial = [3 3]';
-mu2_initial = [-4 -1]';
-mu3_initial = [2 -4]';
-% K =
-% MU_init = 
-% 
-% MU_previous = MU_init;
-% MU_current = MU_init;
-% 
-% % initializations
-% labels = ones(length(DATA),1);
-% converged = 0;
-% iteration = 0;
-% convergence_threshold = 0.025;
-% 
-% while (converged==0)
-%     iteration = iteration + 1;
-%     fprintf('Iteration: %d\n',iteration)
-% 
-%     %% CODE - Assignment Step - Assign each data observation to the cluster with the nearest mean:
-%     % Write code below here:
-%     
-%     %% CODE - Mean Updating - Update the cluster means
-%     % Write code below here:
-%     
-%     %% CODE 4 - Check for convergence 
-%     % Write code below here:
-%     
-%     if (something_here < convergence_threshold)
-%         converged=1;
-%     end
-%     
+
+% initializations
+k = 3;
+MU_init = [3 3; -4 -1; 2 -4];
+
+num_mu = length(MU_init);
+DATA = [gaussian1; gaussian2;  gaussian3];
+converged = 0;
+iteration = 0;
+convergence_threshold = 0.025;
+
+ while (converged==0)
+      iteration = iteration + 1;
+      fprintf('Iteration: %d\n',iteration)
+      
+ 
+     %% CODE - Assignment Step - Assign each data observation to the cluster with the nearest mean:
+     labels = assignDatapoints(DATA, MU_init);
+     
+     %% CODE - Mean Updating - Update the cluster means
+     newMU_init = recalculateCentriod(dataMatrix, labels, num_mu);
+     current_MU = newMU_init;
+     %% CODE 4 - Check for convergence 
+  
+     if (something_here < convergence_threshold)
+         converged=1;
+     end
+     
 %     %% CODE 5 - Plot clustering results if converged:
 %     % Write code below here:
 %     if (converged == 1)
@@ -88,7 +84,4 @@ mu3_initial = [2 -4]';
 %     end
 %     
 %     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% end
-% 
-% 
-% 
+end  

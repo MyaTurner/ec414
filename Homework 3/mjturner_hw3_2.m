@@ -30,7 +30,7 @@ scatter(gaussian2(:,1), gaussian2(:, 2), 'g');
 hold on
 scatter(gaussian3(:,1), gaussian3(:, 2), 'b');
 
-% label axis and include title
+% title
 title('My Gaussian Data')
 
 %% Generate NBA data:
@@ -43,48 +43,65 @@ title('My Gaussian Data')
 % 
 %% K-Means implementation
 
+% initializations
 k = 3;
 MU_init = [3 3; -4 -1; 2 -4];
-
-MU_previous = MU_init;
-MU_current = MU_init;
-
-% initializations
+num_mu = length(MU_init);
 DATA = [gaussian1; gaussian2;  gaussian3];
 converged = 0;
 iteration = 0;
 convergence_threshold = 0.025;
-distanceFrom_mu = euclideanDistance(DATA, MU_init);
+
+% Creating iterator
+current_MU = MU_init;
+
  while (converged==0)
       iteration = iteration + 1;
       fprintf('Iteration: %d\n',iteration)
       
  
      %% CODE - Assignment Step - Assign each data observation to the cluster with the nearest mean:
-     % Write code below here:
-%     
-%     %% CODE - Mean Updating - Update the cluster means
-%     % Write code below here:
-%     
-%     %% CODE 4 - Check for convergence 
-%     % Write code below here:
-%     
-%     if (something_here < convergence_threshold)
-%         converged=1;
-%     end
-%     
-%     %% CODE 5 - Plot clustering results if converged:
-%     % Write code below here:
-%     if (converged == 1)
-%         fprintf('\nConverged.\n')
-%         
-%         
-%        
-%         
-%         %% If converged, get WCSS metric
-%         % Add code below
-%         
-%     end
-%     
-%     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+     labels = assignDatapoints(DATA, current_MU);
+     
+     %% CODE - Mean Updating - Update the cluster means
+     newMU_init = recalculateCentriod(DATA, labels, num_mu);
+     
+     %% CODE 4 - Check for convergence 
+     if (current_MU == newMU_init)
+         converged=1;
+     end
+     
+     % If not converged, update current MU
+     current_MU = newMU_init;
+     
+     %% CODE 5 - Plot clustering results if converged:
+     
+     if (converged == 1)
+         fprintf('\nConverged.\n')
+         
+         % Getting points for each label
+         labeledData_1 = dataMatrix((find(labels == 1)), :)
+         labeledData_2 = dataMatrix((find(labels == 2)), :)
+         labeledData_3 = dataMatrix((find(labels == 3)), :)
+         
+         % Create Scatter Plot
+         % figure
+         scatter(labeledData_1(:,1), labeledData_1(:, 2), 'r');
+         hold on
+         scatter(labeledData_2(:,1), labeledData_2(:, 2), 'g');
+         hold on
+         scatter(labeledData_3(:,1), labeledData_3(:, 2), 'b');
+
+        % title
+        title('k-means = 3 clusters')
+         
+         
+        
+         
+         %% If converged, get WCSS metric
+         % Add code below
+         
+     end
+     
+     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 end  

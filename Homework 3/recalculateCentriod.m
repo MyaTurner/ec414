@@ -9,7 +9,7 @@ newMU_init = zeros(num_mu, 2);
 % Get the value of the labels in the vector
 labelsValues = unique(labels);
 
-for i = 1 :labelsValues
+for i = 1 :num_mu
     
     % Get current label value
     current_label = labelsValues(i);

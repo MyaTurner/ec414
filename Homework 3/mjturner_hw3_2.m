@@ -29,6 +29,7 @@ hold on
 scatter(gaussian2(:,1), gaussian2(:, 2), 'g');
 hold on
 scatter(gaussian3(:,1), gaussian3(:, 2), 'b');
+hold on
 
 % title
 title('My Gaussian Data')
@@ -45,7 +46,7 @@ title('My Gaussian Data')
 
 % initializations
 k = 3;
-MU_init = [3 3; -4 -1; 2 -4];
+MU_init = [3 3; -4, -1; 2 -4];
 num_mu = length(MU_init);
 DATA = [gaussian1; gaussian2;  gaussian3];
 converged = 0;
@@ -67,7 +68,8 @@ current_MU = MU_init;
      newMU_init = recalculateCentriod(DATA, labels, num_mu);
      
      %% CODE 4 - Check for convergence 
-     if (current_MU == newMU_init)
+     convergenceMetric = abs((newMU_init - current_MU) / current_MU);
+     if (convergenceMetric <= convergence_threshold)
          converged=1;
      end
      
@@ -80,9 +82,9 @@ current_MU = MU_init;
          fprintf('\nConverged.\n')
          
          % Getting points for each label
-         labeledData_1 = dataMatrix((find(labels == 1)), :)
-         labeledData_2 = dataMatrix((find(labels == 2)), :)
-         labeledData_3 = dataMatrix((find(labels == 3)), :)
+         labeledData_1 = DATA((find(labels == 1)), :);
+         labeledData_2 = DATA((find(labels == 2)), :);
+         labeledData_3 = DATA((find(labels == 3)), :);
          
          % Create Scatter Plot
          % figure
@@ -92,11 +94,10 @@ current_MU = MU_init;
          hold on
          scatter(labeledData_3(:,1), labeledData_3(:, 2), 'b');
 
-        % title
+        % label axis and title
+        xlabel('First Feature')
+        ylabel('Second Feature')
         title('k-means = 3 clusters')
-         
-         
-        
          
          %% If converged, get WCSS metric
          % Add code below

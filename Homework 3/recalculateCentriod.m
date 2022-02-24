@@ -6,13 +6,10 @@ function newMU_init = recalculateCentriod(dataMatrix, labels, num_mu)
 % Initialize new MU
 newMU_init = zeros(num_mu, 2);
 
-% Get the value of the labels in the vector
-labelsValues = unique(labels);
-
-for i = 1 :num_mu
+for i = 1 : num_mu
     
     % Get current label value
-    current_label = labelsValues(i);
+    current_label = i;
     
     % Find all the data points with this given label
     currentLabel_data = dataMatrix((find(labels == current_label)), :);

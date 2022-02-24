@@ -143,7 +143,7 @@ bestIntial_MUs = trialMUs(index : index + 2, :);
 
 % Plotting the WCSS
 
-% %% K-Means implementation
+%% 3.2 a and b K means implementation
 % 
 %  while (converged==0)
 %       iteration = iteration + 1;

@@ -47,6 +47,7 @@ title('My Gaussian Data')
 % initializations
 k = 3;
 MU_init = [3 3; -4, -1; 2 -4];
+MU_init2 = [-0.14 2.6; 3.15 -0.84; -3.28 -1.58];
 num_mu = length(MU_init);
 DATA = [gaussian1; gaussian2;  gaussian3];
 converged = 0;
@@ -54,7 +55,7 @@ iteration = 0;
 convergence_threshold = 0.025;
 
 % Creating iterator
-current_MU = MU_init;
+current_MU = MU_init2;
 
  while (converged==0)
       iteration = iteration + 1;

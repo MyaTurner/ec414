@@ -3,7 +3,7 @@
 
 clear, clc, close all;
 
-%% 3.2a Generate Gaussian data and Implement k-means:
+%% 3.2 Generate Gaussian data and Implement k-means:
 
 % Intializing mean vectors
 mu1 = [2, 2]';
@@ -29,6 +29,7 @@ hold on
 scatter(gaussian2(:,1), gaussian2(:, 2), 'g');
 hold on
 scatter(gaussian3(:,1), gaussian3(:, 2), 'b');
+hold on
 
 % title
 title('My Gaussian Data')
@@ -41,11 +42,19 @@ title('My Gaussian Data')
 % % Problem 3.2(f): Generate Concentric Rings Dataset using
 % % sample_circle.m provided to you in the HW 3 folder on Blackboard.
 % 
+%% 3.2a
+% MU_init = [3 3; -4, -1; 2 -4];
+% Creating iterator
+% current_MU = MU_init2;
+
+%% 3.2b
+% MU_init2 = [-0.14 2.6; 3.15 -0.84; -3.28 -1.58];
+% Creating iterator
+% current_MU = MU_init2;
 %% K-Means implementation
 
 % initializations
 k = 3;
-MU_init = [3 3; -4 -1; 2 -4];
 num_mu = length(MU_init);
 DATA = [gaussian1; gaussian2;  gaussian3];
 converged = 0;
@@ -53,7 +62,7 @@ iteration = 0;
 convergence_threshold = 0.025;
 
 % Creating iterator
-current_MU = MU_init;
+current_MU = MU_init2;
 
  while (converged==0)
       iteration = iteration + 1;
@@ -67,7 +76,8 @@ current_MU = MU_init;
      newMU_init = recalculateCentriod(DATA, labels, num_mu);
      
      %% CODE 4 - Check for convergence 
-     if (current_MU == newMU_init)
+     convergenceMetric = abs((newMU_init - current_MU) / current_MU);
+     if (convergenceMetric <= convergence_threshold)
          converged=1;
      end
      
@@ -80,9 +90,9 @@ current_MU = MU_init;
          fprintf('\nConverged.\n')
          
          % Getting points for each label
-         labeledData_1 = dataMatrix((find(labels == 1)), :)
-         labeledData_2 = dataMatrix((find(labels == 2)), :)
-         labeledData_3 = dataMatrix((find(labels == 3)), :)
+         labeledData_1 = DATA((find(labels == 1)), :);
+         labeledData_2 = DATA((find(labels == 2)), :);
+         labeledData_3 = DATA((find(labels == 3)), :);
          
          % Create Scatter Plot
          % figure
@@ -92,7 +102,9 @@ current_MU = MU_init;
          hold on
          scatter(labeledData_3(:,1), labeledData_3(:, 2), 'b');
 
-        % title
+        % label axis and title
+        xlabel('First Feature')
+        ylabel('Second Feature')
         title('k-means = 3 clusters')
          
          %% If converged, get WCSS metric

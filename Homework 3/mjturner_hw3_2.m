@@ -3,7 +3,7 @@
 
 clear, clc, close all;
 
-%% 3.2a Generate Gaussian data and Implement k-means:
+%% 3.2 Generate Gaussian data and Implement k-means:
 
 % Intializing mean vectors
 mu1 = [2, 2]';
@@ -42,12 +42,21 @@ title('My Gaussian Data')
 % % Problem 3.2(f): Generate Concentric Rings Dataset using
 % % sample_circle.m provided to you in the HW 3 folder on Blackboard.
 % 
+%% 3.2a
+% MU_init = [3 3; -4, -1; 2 -4];
+
+% Creating iterator
+% current_MU = MU_init;
+
+%% 3.2b
+% MU_init2 = [-0.14 2.6; 3.15 -0.84; -3.28 -1.58];
+
+% Creating iterator
+% current_MU = MU_init2;
 %% K-Means implementation
 
 % initializations
 k = 3;
-MU_init = [3 3; -4, -1; 2 -4];
-MU_init2 = [-0.14 2.6; 3.15 -0.84; -3.28 -1.58];
 num_mu = length(MU_init);
 DATA = [gaussian1; gaussian2;  gaussian3];
 converged = 0;

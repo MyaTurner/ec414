@@ -51,53 +51,97 @@ DATA = [gaussian1; gaussian2;  gaussian3];
 % Creating iterator
 % current_MU = MU_init2;
 
-%% 3.2c
+%% 3.2c Find best centers to intialize
 
 % Initializations
 wcss = [];
-trailMUs = [];
+trialMUs = [];
+alreadyUsed = [];
 iteration = 0;
+trials = 10;
+num_mu = 3;
 
-for i = 1 : 10
+for i = 1 : trials
     
     % Initialize 3 random centers
-    MU_init = getRandom_centers(DATA, 3);
-    num_mu = length(MU_init);
+    [MU_init, usedIndices] = getRandom_centers(DATA, num_mu, alreadyUsed);
     
     % Creating iterator
     current_MU = MU_init;
+    
+    % Resetting converged metric after every iteration
     converged = 0;
+    
+    % Making sure to use different random points at every iteration
+    alreadyUsed = [alreadyUsed usedIndices];
     
     iteration = iteration + 1;
      fprintf('Iteration: %d\n',iteration)
+     innerIteration = 0;
     
-    while (converged==0)
-     
-     %% CODE - Assignment Step - Assign each data observation to the cluster with the nearest mean:
-     labels = assignDatapoints(DATA, current_MU);
-     
-     %% CODE - Mean Updating - Update the cluster means
-     newMU_init = recalculateCentriod(DATA, labels, num_mu);
-     
-     %% CODE 4 - Check for convergence 
-     convergenceMetric = abs( sum( sum (newMU_init - current_MU) ) );
-     if (convergenceMetric <= convergence_threshold)
-         
-         % Set converged to true
-         converged=1;
-         
-         % If converged, get WCSS metric
-         cost = WCSS(DATA, labels, current_MU, num_mu);
+     while (converged == 0)
+         innerIteration = innerIteration + 1;
+         fprintf('Iteration unitl next convergence: %d\n',innerIteration);
+      
+      %% CODE - Assignment Step - Assign each data observation to the cluster with the nearest mean:
+      labels = assignDatapoints(DATA, current_MU);
+      
+      %% CODE - Mean Updating - Update the cluster means
+      newMU_init = recalculateCentriod(DATA, labels, num_mu);
+      
+      %% CODE 4 - Check for convergence 
+      convergenceMetric = abs( sum( sum (current_MU - newMU_init) ) );
+      if (convergenceMetric <= convergence_threshold)
           
-     else
-         % If not converged, update current MU
-          current_MU = newMU_init;
+          % Set converged to true
+          converged=1;
+          
+          % If converged, get WCSS metric
+          cost = WCSS(DATA, labels, current_MU, num_mu);
+          
+          fprintf('\nConverged.\n')
+          
+          % Getting points for each label
+         labeledData_1 = DATA((find(labels == 1)), :);
+          labeledData_2 = DATA((find(labels == 2)), :);
+          labeledData_3 = DATA((find(labels == 3)), :);
+          
+          % Create Scatter Plot
+           figure
+          scatter(labeledData_1(:,1), labeledData_1(:, 2), 'r');
+          hold on
+          scatter(labeledData_2(:,1), labeledData_2(:, 2), 'g');
+          hold on
+          scatter(labeledData_3(:,1), labeledData_3(:, 2), 'b');
+ 
+         % label axis and title
+         xlabel('First Feature')
+         ylabel('Second Feature')
+         title (sprintf('Trial %d',i))
+           
+      else
+          % If not converged, update current MU
+           current_MU = newMU_init;
+      end
      end
-    end
-    wcss = [wcss cost];
-    trailMUs = [trailMUs ; current_MU];
-    
+     wcss = [wcss cost];
+     trialMUs = [trialMUs ; MU_init];
+  
 end
+
+% Find smallest WCSS
+minWCSS = min(wcss);
+
+% Finding clusters the smallest WCSS produced
+bestTrial = find(wcss == minWCSS, 1);
+fprintf('Trial %d had the best wcss with a value of %d\n',bestTrial, floor(minWCSS) );
+index = 3 * bestTrial;
+bestIntial_MUs = trialMUs(index : index + 2, :);
+
+% Creating iterator
+ current_MU = bestIntial_MUs;
+
+% Plotting the WCSS
 
 % %% K-Means implementation
 % 
@@ -144,9 +188,7 @@ end
 %         ylabel('Second Feature')
 %         title('k-means = 3 clusters')
 %          
-%          %% If converged, get WCSS metric
-%          % Add code below
-%          
+%   
 %      end
 %      
 %      %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

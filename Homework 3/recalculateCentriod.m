@@ -14,16 +14,21 @@ for i = 1 : num_mu
     % Find all the data points with this given label
     currentLabel_data = dataMatrix((find(labels == current_label)), :);
     
-    % Calculate the mean x-distance for all the points with this given
-    % label
-    mu_x = mean(currentLabel_data(:,1));
+    % If the current cluster has labels re-compute
+    if(~isempty(currentLabel_data))
+        
+        % Calculate the mean x-distance for all the points with this given
+        % label
+        mu_x = mean(currentLabel_data(:,1));
     
-    % Calculate the mean y-distance for all the points with this given
-    % label
-    mu_y = mean(currentLabel_data(:,2));
+        % Calculate the mean y-distance for all the points with this given
+        % label
+        mu_y = mean(currentLabel_data(:,2));
     
-    % Add to new mu matrix
-    newMU_init(i,:) = [mu_x mu_y];
+        % Add to new mu matrix
+        newMU_init(i,:) = [mu_x mu_y];
+    end
+    
     
 end
 

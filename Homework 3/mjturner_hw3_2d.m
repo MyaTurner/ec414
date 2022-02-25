@@ -95,11 +95,6 @@ ylabel('WCSS values')
 title('WCSS values v k range')
 
 
-%% Generate NBA data:
-% % Add code below:
-% 
-% % HINT: readmatrix might be useful here
-% 
 %% Problem 3.2(f): Generate Concentric Rings Dataset using
 % % sample_circle.m provided to you in the HW 3 folder on Blackboard.
 

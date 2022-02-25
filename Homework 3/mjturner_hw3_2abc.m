@@ -135,11 +135,6 @@ minWCSS = min(wcss);
 % Finding clusters the smallest WCSS produced
 bestTrial = find(wcss == minWCSS, 1);
 fprintf('Trial %d had the best wcss with a value of %d\n',bestTrial, floor(minWCSS) );
-index = 3 * bestTrial;
-bestIntial_MUs = trialMUs(index : index + 2, :);
-
-% Creating iterator
- current_MU = bestIntial_MUs;
 
 % Plotting the WCSS
 

@@ -4,14 +4,30 @@
 clear, clc, close all,
 
 %% Generate Gaussian data:
-% Add code below:
+% Intializing mean vectors
+mu1 = [2, 2]';
+mu2 = [-2,  2]';
+mu3 = [0, -3.25]';
+
+% Intializing covariance vectors
+identityMatrix = [1, 0; 0, 1];
+sigma1 = 0.02 .* identityMatrix;
+sigma2 = 0.05 .* identityMatrix;
+sigma3 = 0.07 .* identityMatrix;
+
+% Creating Gaussian Data Clusters
+gaussian1 = mvnrnd(mu1,sigma1,50);
+gaussian2 = mvnrnd(mu2,sigma2,50);
+gaussian3 = mvnrnd(mu3,sigma3,50);
+
+DATA = [gaussian1; gaussian2;  gaussian3];
 
 
 %% Generate NBA data:
-% Add code below:
-
-% HINT: readmatrix might be useful here
-
+NBA = readmatrix("NBA_stats_2018_2019.xlsx");
+points = NBA(:,7);
+minutes = NBA(:,5);
+% DATA = [minutes points];
 %% DP Means method:
 
 % Parameter Initializations

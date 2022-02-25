@@ -7,7 +7,7 @@ function distanceFrom_mu = euclideanDistance(dataMatrix, MU_init)
 % given centroid 
 
 % Initializing distance vector
-num_mu = length(MU_init);
+num_mu = height(MU_init);
 num_datapoints = length(dataMatrix);
 distanceFrom_mu = zeros(num_datapoints, num_mu);
 

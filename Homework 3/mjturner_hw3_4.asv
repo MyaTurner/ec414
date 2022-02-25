@@ -27,10 +27,8 @@ LAMBDA = 0.15;
 convergence_threshold = 1;
 MU = [];
 MU = [MU; mean(DATA,1)];
-x_name = 'First Feature';
-y_name = 'Second Feature';
 
-DPmeans(DATA, LAMBDA, MU, convergence_threshold, x_name, y_name);
+DPmeans(DATA, LAMBDA, MU, convergence_threshold);
 
 %% 3.4c Generate NBA data:
 NBA = readmatrix("NBA_stats_2018_2019.xlsx");
@@ -39,7 +37,7 @@ minutes = NBA(:,5);
 % DATA = [minutes points];
 
 %% Functions
-function DPmeans(dataMatrix, lambda, mu, convergence_threshold, x_name, y_name)
+function DPmeans(dataMatrix, lambda, mu, convergence_threshold)
 
 % Initializations
 k = 1;
@@ -53,9 +51,6 @@ clusters = [clusters [1 : height(dataMatrix)] ];
 % Iterator for mu
 current_MU = mu;
 
-%Iterator for mu_array
-currentMU_array = mu_array;
-
 % Initialze all labels of data matrix to 1.  Each row corresponds to a data
 % point
 labels = ones(length(dataMatrix), 1);
@@ -65,7 +60,7 @@ while(converged == 0)
     t = t + 1;
     fprintf('Current iteration: %d...\n',t)
     
-    %Iterators
+    %Iterator for k
     prev_k = k;
     
     for i = 1 : height(dataMatrix)
@@ -85,7 +80,7 @@ while(converged == 0)
         if(penalty > lambda)
             k = k + 1;
             labels(min_indices) = k;
-            currentMU_array = [currentMU_array; current_point];
+            mu_array = [mu_array; current_point];
             current_MU = current_point;
             
         end
@@ -106,12 +101,12 @@ while(converged == 0)
     
     % Check for convergence by checking if k is not changing and the
     % cluster means by a specifed threshold
-    convergenceMetric = abs( sum( sum (currentMU_array - newMU_array) ) );
+    convergenceMetric = abs( sum( sum (mu_array - newMU_array) ) );
     if(convergenceMetric <= convergence_threshold && prev_k == k)
         
         converged = 1;
     else
-        currentMU_array = newMU_array;
+        mu_array = newMU_array;
     end
     
     if(converged)
@@ -120,7 +115,7 @@ while(converged == 0)
         % Getting points for each label
         for i = 1 : k
             % Getting points for each label
-            labeledData = dataMatrix((find(labels == k)), :);
+            labeledData = DATA((find(labels == k)), :);
             
             % Create Scatter Plot
             figure
@@ -128,9 +123,9 @@ while(converged == 0)
             hold on
             
             % label axis and title
-            xlabel(sprintf('%s', x_name))
-            ylabel(sprintf('%s', y_name))
-            title (sprintf('Clusters for lambda = %.3f ',lambda))
+            xlabel('First Feature')
+            ylabel('Second Feature')
+            title (sprintf('Clusters for lammbda = %d ',lambda))
         end
     end
     

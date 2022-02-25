@@ -51,6 +51,56 @@ DATA = [gaussian1; gaussian2;  gaussian3];
 % Creating iterator
 % current_MU = MU_init2;
 
+%% 3.2 a and b K means implementation
+% 
+%  while (converged==0)
+%       iteration = iteration + 1;
+%       fprintf('Iteration: %d\n',iteration)
+%       
+%  
+%      %% CODE - Assignment Step - Assign each data observation to the cluster with the nearest mean:
+%      labels = assignDatapoints(DATA, current_MU);
+%      
+%      %% CODE - Mean Updating - Update the cluster means
+%      newMU_init = recalculateCentriod(DATA, labels, num_mu);
+%      
+%      %% CODE 4 - Check for convergence 
+%      convergenceMetric = abs((newMU_init - current_MU) / current_MU);
+%      if (convergenceMetric <= convergence_threshold)
+%          converged=1;
+%      end
+%      
+%      % If not converged, update current MU
+%      current_MU = newMU_init;
+%      
+%      %% CODE 5 - Plot clustering results if converged:
+%      
+%      if (converged == 1)
+%          fprintf('\nConverged.\n')
+%          
+%          % Getting points for each label
+%          labeledData_1 = DATA((find(labels == 1)), :);
+%          labeledData_2 = DATA((find(labels == 2)), :);
+%          labeledData_3 = DATA((find(labels == 3)), :);
+%          
+%          % Create Scatter Plot
+%          % figure
+%          scatter(labeledData_1(:,1), labeledData_1(:, 2), 'r');
+%          hold on
+%          scatter(labeledData_2(:,1), labeledData_2(:, 2), 'g');
+%          hold on
+%          scatter(labeledData_3(:,1), labeledData_3(:, 2), 'b');
+% 
+%         % label axis and title
+%         xlabel('First Feature')
+%         ylabel('Second Feature')
+%         title('k-means = 3 clusters')
+%          
+%   
+%      end
+%      
+%      %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%  end  
 %% 3.2c Find best centers to intialize
 
 % Initializations
@@ -135,64 +185,3 @@ minWCSS = min(wcss);
 % Finding clusters the smallest WCSS produced
 bestTrial = find(wcss == minWCSS, 1);
 fprintf('Trial %d had the best wcss with a value of %d\n',bestTrial, floor(minWCSS) );
-
-% Plotting the WCSS
-
-%% 3.2 a and b K means implementation
-% 
-%  while (converged==0)
-%       iteration = iteration + 1;
-%       fprintf('Iteration: %d\n',iteration)
-%       
-%  
-%      %% CODE - Assignment Step - Assign each data observation to the cluster with the nearest mean:
-%      labels = assignDatapoints(DATA, current_MU);
-%      
-%      %% CODE - Mean Updating - Update the cluster means
-%      newMU_init = recalculateCentriod(DATA, labels, num_mu);
-%      
-%      %% CODE 4 - Check for convergence 
-%      convergenceMetric = abs((newMU_init - current_MU) / current_MU);
-%      if (convergenceMetric <= convergence_threshold)
-%          converged=1;
-%      end
-%      
-%      % If not converged, update current MU
-%      current_MU = newMU_init;
-%      
-%      %% CODE 5 - Plot clustering results if converged:
-%      
-%      if (converged == 1)
-%          fprintf('\nConverged.\n')
-%          
-%          % Getting points for each label
-%          labeledData_1 = DATA((find(labels == 1)), :);
-%          labeledData_2 = DATA((find(labels == 2)), :);
-%          labeledData_3 = DATA((find(labels == 3)), :);
-%          
-%          % Create Scatter Plot
-%          % figure
-%          scatter(labeledData_1(:,1), labeledData_1(:, 2), 'r');
-%          hold on
-%          scatter(labeledData_2(:,1), labeledData_2(:, 2), 'g');
-%          hold on
-%          scatter(labeledData_3(:,1), labeledData_3(:, 2), 'b');
-% 
-%         % label axis and title
-%         xlabel('First Feature')
-%         ylabel('Second Feature')
-%         title('k-means = 3 clusters')
-%          
-%   
-%      end
-%      
-%      %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%  end  
-%% Generate NBA data:
-% % Add code below:
-% 
-% % HINT: readmatrix might be useful here
-% 
-%% Problem 3.2(f): Generate Concentric Rings Dataset using
-% % sample_circle.m provided to you in the HW 3 folder on Blackboard.
-

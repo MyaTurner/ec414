@@ -117,27 +117,24 @@ while(converged == 0)
     if(converged)
         
         % Plot final clusters after convergence
+        
         % Getting points for each label
         for i = 1 : k
             % Getting points for each label
-            labeledData = dataMatrix((find(labels == k)), :);
+            labeledData = dataMatrix((find(labels == i)), :);
             
             % Create Scatter Plot
             figure
-            scatter(labeledData(:,1), labeledData(:, 2));
             hold on
+            scatter(labeledData(:,1), labeledData(:, 2));
             
             % label axis and title
             xlabel(sprintf('%s', x_name))
             ylabel(sprintf('%s', y_name))
-            title (sprintf('Clusters for lambda = %.3f ',lambda))
+            title (sprintf('Clusters for lambda = %.2f ',lambda))
         end
     end
-    
-    
 end
-
-
 end
 
 %% DP Means method:

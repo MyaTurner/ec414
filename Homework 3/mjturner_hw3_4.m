@@ -117,14 +117,14 @@ while(converged == 0)
     if(converged)
         
         % Plot final clusters after convergence
-        
+         figure
         % Getting points for each label
         for i = 1 : k
             % Getting points for each label
             labeledData = dataMatrix((find(labels == i)), :);
             
             % Create Scatter Plot
-            figure
+            
             hold on
             scatter(labeledData(:,1), labeledData(:, 2));
             
@@ -134,6 +134,7 @@ while(converged == 0)
             title (sprintf('Clusters for lambda = %.2f ',lambda))
         end
     end
+    
 end
 end
 

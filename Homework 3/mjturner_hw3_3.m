@@ -89,7 +89,23 @@ for k = 2 : 10
 end
 
 % Plot results of WCSS v k range
-plot(k_array, bestWCSS_byk, 'g');
+% plot(k_array, bestWCSS_byk, 'g');
 xlabel('k range')
 ylabel('WCSS values')
 title('WCSS values v k range')
+
+%% %%%%% 3.3 Selecting k via k-means WCSS + penalty lambda * k %%%%% %%
+
+% Given equation for f(k, lambda) = WCSS of k-means + lambda * k
+% For every lambda do this...
+lambda = [15 20 25 30];
+for i = 1 : length(lambda)
+    fk = bestWCSS_byk + lambda(i) .* k_array; 
+    plot(k_array, fk);
+    hold on
+end
+
+xlabel('k range')
+ylabel('penalty')
+title('penalty v k range')
+

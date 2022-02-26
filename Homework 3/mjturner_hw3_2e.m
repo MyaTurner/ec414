@@ -121,7 +121,3 @@ minWCSS = min(wcss);
 bestTrial = find(wcss == minWCSS, 1);
 fprintf('Trial %d had the best wcss with a value of %d\n',bestTrial, floor(minWCSS) );
 
-
-%% Problem 3.2(f): Generate Concentric Rings Dataset using
-% % sample_circle.m provided to you in the HW 3 folder on Blackboard.
-

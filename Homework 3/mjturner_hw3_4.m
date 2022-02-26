@@ -23,14 +23,21 @@ gaussian3 = mvnrnd(mu3,sigma3,50);
 DATA = [gaussian1; gaussian2;  gaussian3];
 
 % Parameter Initializations
-LAMBDA = 0.15;
+LAMBDA = [0.15 0.4 3 20];
 convergence_threshold = 1;
 MU = [];
+
+% Initial center
 MU = [MU; mean(DATA,1)];
+
+% names for plot
 x_name = 'First Feature';
 y_name = 'Second Feature';
 
-DPmeans(DATA, LAMBDA, MU, convergence_threshold, x_name, y_name);
+
+for i = 1 : length(LAMBDA)
+    DPmeans(DATA, LAMBDA(i), MU, convergence_threshold, x_name, y_name);
+end
 
 %% 3.4c Generate NBA data:
 NBA = readmatrix("NBA_stats_2018_2019.xlsx");
@@ -50,9 +57,6 @@ t = 0;
 clusters = {};
 clusters = [clusters [1 : height(dataMatrix)] ];
 
-% Iterator for mu
-current_MU = mu;
-
 %Iterator for mu_array
 currentMU_array = mu_array;
 
@@ -68,26 +72,24 @@ while(converged == 0)
     %Iterators
     prev_k = k;
     
+    
     for i = 1 : height(dataMatrix)
         
-        % Get Current point
+        % Get current point
         current_point = dataMatrix(i, :);
         
-        % Find distance for each point from its label center mu
-        distanceFrom_mu = euclideanDistance(dataMatrix, current_MU);
+        % Find distance for each point from all exsisting centers
+        distanceFrom_mu = euclideanDistance(current_point, currentMU_array);
     
         % Find the point with the minimum distance from above
-        minDistance = min(distanceFrom_mu);
-        min_indices = find(distanceFrom_mu == minDistance);
+        minDistance  = min(distanceFrom_mu);
         
         % Define and do penalty check
-        penalty = minDistance ^ 2;
+        penalty = sum(minDistance .^ 2);
         if(penalty > lambda)
             k = k + 1;
-            labels(min_indices) = k;
+            labels(i) = k;
             currentMU_array = [currentMU_array; current_point];
-            current_MU = current_point;
-            
         end
     end
     
@@ -133,6 +135,7 @@ while(converged == 0)
             ylabel(sprintf('%s', y_name))
             title (sprintf('Clusters for lambda = %.2f ',lambda))
         end
+        
     end
     
 end

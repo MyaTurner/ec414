@@ -36,14 +36,28 @@ y_name = 'Second Feature';
 
 
 for i = 1 : length(LAMBDA)
-    DPmeans(DATA, LAMBDA(i), MU, convergence_threshold, x_name, y_name);
+    % DPmeans(DATA, LAMBDA(i), MU, convergence_threshold, x_name, y_name);
 end
 
 %% 3.4c Generate NBA data:
+LAMBDA = [44 100 450];
 NBA = readmatrix("NBA_stats_2018_2019.xlsx");
 points = NBA(:,7);
 minutes = NBA(:,5);
-% DATA = [minutes points];
+DATA = [minutes points];
+MU = [];
+
+% Initial center
+MU = [MU; mean(DATA,1)];
+
+ 
+% names for plot
+x_name = 'Minutes per game';
+y_name = 'Points per game';
+ 
+for i = 1 : length(LAMBDA)
+    DPmeans(DATA, LAMBDA(i), MU, convergence_threshold, x_name, y_name);
+end
 
 %% Functions
 function DPmeans(dataMatrix, lambda, mu, convergence_threshold, x_name, y_name)
@@ -71,7 +85,6 @@ while(converged == 0)
     
     %Iterators
     prev_k = k;
-    
     
     for i = 1 : height(dataMatrix)
         
@@ -123,7 +136,7 @@ while(converged == 0)
         % Getting points for each label
         for i = 1 : k
             % Getting points for each label
-            labeledData = dataMatrix((find(labels == i)), :);
+            labeledData = dataMatrix(clusters{i}, :);
             
             % Create Scatter Plot
             

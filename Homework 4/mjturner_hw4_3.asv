@@ -39,9 +39,7 @@ for i = 1:4
     axis equal;
 end
 
-% Using dataset (ii) for the rest of the questions
-[X, Y] = two_2D_Gaussians(n1, n2, mu1, mu2, lambda1(2), lambda2(2), theta(2) * pi/6);
-
+% Using dataset (ii) for the rest of the
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % 4.3(b)
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

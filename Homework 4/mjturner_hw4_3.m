@@ -14,6 +14,7 @@ rng('default')  % For reproducibility of data and results
 
 n1 = 50;
 n2 = 100;
+n = n1 + n2;
 mu1 = [1; 2];
 mu2 = [3; 2];
 
@@ -142,8 +143,8 @@ grid;axis equal;hold on;
 xlabel('x_1');ylabel('x_2');
 title(['\theta = ',num2str(1),'\times \pi/6']);
 scatter(X2(1,:),X2(2,:),'^','fill','r');
-plot([mu1(1) mu1(1) + w_LDA(1)],[mu1(2) mu1(2) + w_LDA(2)]);
-plot([mu1(1) mu1(1)+diff_means(1)],[mu1(2) mu1(2)+diff_means(2)]);
+plot([mu1(1) mu1(1) + w_LDA(1)],[mu1(2) mu1(2) + w_LDA(2)], 'linewidth', 2);
+plot([mu1(1) mu1(1)+diff_means(1)],[mu1(2) mu1(2)+ diff_means(2)], 'linewidth', 2);
 legend('Class Data 1', 'Class Data 2', 'ux1 - ux2', 'wlda')
 hold off
 axis equal;
@@ -170,9 +171,21 @@ end
 % See below for the compute_ccr function which you need to complete.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% Insert code to plote CCR as a function of b and determine the value of b
+% Insert code to plot CCR as a function of b and determine the value of b
 % which maximizes the CCR.
 % ...
+figure()
+hold on
+scatter(X1(1,:),X1(2,:),'o','fill','b');
+grid;axis equal;hold on;
+xlabel('x_1');ylabel('x_2');
+title(['\theta = ',num2str(1),'\times \pi/6']);
+scatter(X2(1,:),X2(2,:),'^','fill','r');
+plot(b_array, ccr_array, 'linewidth', 2);
+legend('Class Data 1', 'Class Data 2', 'CCR v b')
+title('CCR v b')
+hold off
+axis equal;
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -320,6 +333,24 @@ function ccr = compute_ccr(X, Y, w_LDA, b)
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Insert your code here to compute the CCR for the given labeled dataset
 % (X,Y) when you classify the feature vectors in X using w_LDA and b
-% ...
+% 
+% Defining each class
+X1 = X(:, find(Y==1));
+X2 = X(:, find(Y==2));
+n1 = width(X1);
+n2 = width(X2);
+
+% Defining hyperplane decision
+threshold = 0;
+for i = 1 : n1
+    threshold = w_LDA' * X(:,i) + b;
+    if(threshold <= 0)
+        ccr = 1;
+    else
+        ccr = 2;
+    end
+    
+end
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 end

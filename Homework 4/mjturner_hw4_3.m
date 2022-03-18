@@ -84,6 +84,19 @@ scatter(phi_array,snr_array)
 xlabel('Phi');
 ylabel('SNR');
 title('SNR v Phi');
+
+maxSignal = max(signal_power_array);
+maxSignal_phi = phi_array(find(signal_power_array == maxSignal));
+fprintf('Phi that maximizes signal: %.3f\n', maxSignal_phi);
+
+minNoise = min(noise_power_array);
+minNoise_phi = phi_array(find(noise_power_array == minNoise));
+fprintf('Phi that minimizes noise: %.3f\n', minNoise_phi);
+
+maxSNR = max(snr_array);
+maxSNR_phi = phi_array(find(snr_array == maxSNR));
+fprintf('Phi that maximizes SNR: %.3f\n\n', maxSNR_phi);
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 
@@ -96,6 +109,14 @@ title('SNR v Phi');
 % signal_noise_snr(X, Y, phi, want_class_density_plots);
 % Insert your script here 
 % ...
+phi_array = [0 pi/6 pi/3];
+for i=1:1:length(phi_array)
+    [signal, noise, snr] = signal_noise_snr(X, Y, phi_array(i), true);
+    % See below for function signal_noise_snr which you need to complete.
+    signal_power_array(i) = signal;
+    noise_power_array(i) = noise;
+    snr_array(i) = snr;
+end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

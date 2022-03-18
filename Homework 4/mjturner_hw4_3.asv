@@ -66,7 +66,38 @@ end
 % power versus phi, and snr versus phi and to locate the values of phi
 % where the signal power is maximized, the noise power is minimized, and
 % the snr is maximized
-% ...
+%
+figure(2);
+scatter(phi_array,signal_power_array)
+xlabel('Phi');
+ylabel('Signal Power');
+title('Signal Power v Phi');
+
+figure(3);
+scatter(phi_array,noise_power_array)
+xlabel('Phi');
+ylabel('Noise Power');
+title('Noise Power v Phi');
+
+figure(4);
+scatter(phi_array,snr_array)
+xlabel('Phi');
+ylabel('SNR');
+title('SNR v Phi');
+
+max_signal = max(signal_power_array);
+phi_max_signal = phi_array(find(signal_power_array == max_signal));
+fprintf('The value of phi that maximizes the squared distance between the class means of the projected values is');
+
+minNoise = min(noise_power_array);
+phi_min_noise = phi_array(find(noise_power_array == min_noise));
+fprintf('The value of phi that minimizes the average within-class variance is');
+
+
+maxSNR = max(snr_array);
+phi_max_snr = phi_array(find(snr_array == max_snr));
+fprintf('The value of phi which maximizes the SNR is ');
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 
@@ -79,6 +110,14 @@ end
 % signal_noise_snr(X, Y, phi, want_class_density_plots);
 % Insert your script here 
 % ...
+phi_array = [0 pi/6 pi/3];
+for i=1:1:length(phi_array)
+    [signal, noise, snr] = signal_noise_snr(X, Y, phi_array(i), true);
+    % See below for function signal_noise_snr which you need to complete.
+    signal_power_array(i) = signal;
+    noise_power_array(i) = noise;
+    snr_array(i) = snr;
+end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -162,7 +201,9 @@ X2 = X(:, find(Y==2));
 n1 = width(X1);
 n2 = width(X2);
 n = n1 + n2;
-w = [cos(phi) sin(phi)];
+
+% Note w is nothing but the direction of projection!
+w = [cos(phi); sin(phi)];
 
 % Step 1) Find empirical means for each class
 mu1 = mean(X1');
@@ -191,8 +232,8 @@ sigma2 = 1/n2 * X2_centered * X2_centered';
 sigmaAvg = p1 * sigma1 + p2 * sigma2;
 
 % Find means projected onto direction phi
-muz1 = w * mu1';
-muz2 = w * mu2';
+muz1 = w' * mu1';
+muz2 = w' * mu2';
 
 % Find signal (euclidean distance between means projected to phi)
 signal = (muz2 - muz1).^2;

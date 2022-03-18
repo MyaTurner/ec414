@@ -134,7 +134,17 @@ w_LDA = LDA(X,Y);
 % Insert code to create a scatter plot and overlay the LDA vector and the 
 % difference between the class means. Use can use Matlab's quiver function 
 % to do this.
-% ...
+diff_means = mu2 - mu1;
+figure(5)
+hold on
+scatter(X1(1,:),X1(2,:),'o','fill','b');
+grid;axis equal;hold on;
+xlabel('x_1');ylabel('x_2');
+title(['\theta = ',num2str(1),'\times \pi/6']);
+scatter(X2(1,:),X2(2,:),'^','fill','r');
+plot(w_LDA(1), w_LDA(2));
+plot(diff_means(1), diff_means(2));
+axis equal;
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -313,35 +323,8 @@ sigmaAvg = p1 * sigma1 + p2 * sigma2;
 sigmaAvg_inverse = inv(sigmaAvg);
 
 % Step 5) Find wlda
-wlda = sigmaAvg_inverse * (mu2 - mu1)';
+w_LDA = sigmaAvg_inverse * (mu2 - mu1)';
 
-% Find means projected onto wlda
-muz1 = wlda' * mu1';
-muz2 = wlda' * mu2';
-
-% Project means onto direction phi
-directionPhi = [cos(phi);sin(phi)];
-muz1_phi = directionPhi' * muz1';
-muz2_phi = directionPhi' * muz2';
-
-% Find signal (euclidean distance between means projected to phi)
-signal = (muz2_phi - muz1_phi).^2;
-
-% Find covariances projected onto wlda
-sigmaz1 = wlda' * sigma1 * wlda;
-sigmaz2 = wlda' * sigma2 * wlda;
-
-% Project variances onto direction phi
-sigmaz1_phi = directionPhi' * sigmaz1;
-sigmaz2_phi = directionPhi' * sigmaz2;
-
-% Find signal (euclidean distance between means projected to phi)
-noise = n1/n * sigmaz1_phi + n2/n * sigmaz2_phi;
-
-% Find SNR (Signal to Noise Ratio)
-snr = ((wlda' * (mu2 - mu1)').^2) /  (wlda' * sigmaAvg_inverse * wlda );
-
-% ...
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 end

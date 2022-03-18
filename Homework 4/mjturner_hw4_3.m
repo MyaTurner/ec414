@@ -135,15 +135,17 @@ w_LDA = LDA(X,Y);
 % difference between the class means. Use can use Matlab's quiver function 
 % to do this.
 diff_means = mu2 - mu1;
-figure(5)
+figure()
 hold on
 scatter(X1(1,:),X1(2,:),'o','fill','b');
 grid;axis equal;hold on;
 xlabel('x_1');ylabel('x_2');
 title(['\theta = ',num2str(1),'\times \pi/6']);
 scatter(X2(1,:),X2(2,:),'^','fill','r');
-plot(w_LDA(1), w_LDA(2));
-plot(diff_means(1), diff_means(2));
+plot([mu1(1) mu1(1) + w_LDA(1)],[mu1(2) mu1(2) + w_LDA(2)]);
+plot([mu1(1) mu1(1)+diff_means(1)],[mu1(2) mu1(2)+diff_means(2)]);
+legend('Class Data 1', 'Class Data 2', 'ux1 - ux2', 'wlda')
+hold off
 axis equal;
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -225,18 +227,11 @@ p2 = n2/n;
 
 % Step 3) Find covariance matrices
 % Need to get centered means
-X1_centered = zeros(2, n1);
-for i = 1: n1
-    X1_centered(:, i) = X1(:, i) - mu1';
-end
+X1_centered = X1 - mu1';
+X2_centered = X2 - mu2';
 
-X2_centered = zeros(2, n2);
-for i = 1: n1
-    X2_centered(:, i) = X2(:, i) - mu2';
-end
-
-sigma1 = 1/n1 * X1_centered * X1_centered';
-sigma2 = 1/n2 * X2_centered * X2_centered';
+sigma1 = 1/n1 * (X1_centered) * (X1_centered');
+sigma2 = 1/n2 * (X2_centered) * (X2_centered');
 
 % Step 4) Find average covariance matrices
 sigmaAvg = p1 * sigma1 + p2 * sigma2;
@@ -305,15 +300,8 @@ p2 = n2/n;
 
 % Step 3) Find covariance matrices
 % Need to get centered means
-X1_centered = zeros(2, n1);
-for i = 1: n1
-    X1_centered(:, i) = X1(:, i) - mu1';
-end
-
-X2_centered = zeros(2, n2);
-for i = 1: n1
-    X2_centered(:, i) = X2(:, i) - mu2';
-end
+X1_centered = X1 - mu1';
+X2_centered = X1 - mu1';
 
 sigma1 = 1/n1 * X1_centered * X1_centered';
 sigma2 = 1/n2 * X2_centered * X2_centered';
@@ -324,7 +312,6 @@ sigmaAvg_inverse = inv(sigmaAvg);
 
 % Step 5) Find wlda
 w_LDA = sigmaAvg_inverse * (mu2 - mu1)';
-
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 end

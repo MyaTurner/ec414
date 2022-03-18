@@ -134,7 +134,7 @@ w_LDA = LDA(X,Y);
 % Insert code to create a scatter plot and overlay the LDA vector and the 
 % difference between the class means. Use can use Matlab's quiver function 
 % to do this.
-
+diff_means = mu2 - mu1;
 figure(5)
 hold on
 scatter(X1(1,:),X1(2,:),'o','fill','b');
@@ -142,7 +142,8 @@ grid;axis equal;hold on;
 xlabel('x_1');ylabel('x_2');
 title(['\theta = ',num2str(1),'\times \pi/6']);
 scatter(X2(1,:),X2(2,:),'^','fill','r');
-plot(w_LDA(1), 
+plot([mu1(1) + w_LDA(1)],[mu1(2) + w_LDA(2)]);
+plot([mu1(1)]+diff_means(1)],[mu1(2)+diff_means(2)]);
 axis equal;
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 

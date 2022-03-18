@@ -109,7 +109,8 @@ fprintf('Phi that maximizes SNR: %.3f\n\n', maxSNR_phi);
 % signal_noise_snr(X, Y, phi, want_class_density_plots);
 % Insert your script here 
 % ...
-phi_array = [0 pi/6 pi/3];
+phi_array = [0 1 2];
+[f, xi] = ksdensity(X');
 for i=1:1:length(phi_array)
     [signal, noise, snr] = signal_noise_snr(X, Y, phi_array(i), true);
     % See below for function signal_noise_snr which you need to complete.
@@ -258,17 +259,17 @@ snr = ((w' * (mu2 - mu1)').^2) /  (w' * sigmaAvg * w );
 if want_class_density_plots == true
     % Plot density estimates for both classes along chosen direction phi
     figure();
-    [pdf1,z1] = ksdensity(X_projected_phi_class1);
+    [pdf1,z1] = ksdensity(w' * X1);
     plot(pdf1,z1)
     hold on;
-    [pdf2,z2] = ksdensity(X_projected_phi_class2);
+    [pdf2,z2] = ksdensity(w' * X2);
     plot(pdf2,z2)
     grid on;
     hold off;
     legend('Class 1', 'Class 2')
     xlabel('projected value')
     ylabel('density estimate')
-    title('Estimated class density estimates of data projected along \phi = ? \times \pi/6. Ground-truth \phi = \pi/6')
+    title(['Estimated class density estimates of data projected along \phi =',num2str(phi),'\times \pi/6']);
 end
 
 end

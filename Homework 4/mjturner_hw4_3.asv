@@ -39,7 +39,9 @@ for i = 1:4
     axis equal;
 end
 
-% Using dataset (ii) for the rest of the
+% Using dataset (ii) for the rest of the questions
+[X, Y] = two_2D_Gaussians(n1, n2, mu1, mu2, lambda1(2), lambda2(2), theta(2) * pi/6);
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % 4.3(b)
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -52,7 +54,7 @@ signal_power_array = zeros(1,length(phi_array));
 noise_power_array = zeros(1,length(phi_array));
 snr_array = zeros(1,length(phi_array));
 for i=1:1:length(phi_array)
-    [signal_power, noise_power, snr] = signal_noise_snr(X, Y, phi_array(i), false);
+    [signal, noise, snr] = signal_noise_snr(X, Y, phi_array(i), false);
     % See below for function signal_noise_snr which you need to complete.
     signal_power_array(i) = signal;
     noise_power_array(i) = noise;
@@ -132,30 +134,6 @@ function [X, Y] = two_2D_Gaussians(n1,n2,mu1,mu2,lambda1,lambda2,theta)
 % This function should generate a labeled dataset of 2D data points drawn 
 % independently from 2 Gaussian distributions with the same covariance 
 % matrix but different mean vectors
-%
-% Inputs:
-%
-% n1 = number of class 1 examples
-% n2 = number of class 2 examples
-% mu1 = 2 by 1 class 1 mean vector
-% mu2 = 2 by 1 class 2 mean vector
-% theta = orientation of eigenvectors of common 2 by 2 covariance matrix shared by both classes
-% lambda1 = first eigenvalue of common 2 by 2 covariance matrix shared by both classes
-% lambda2 = second eigenvalue of common 2 by 2 covariance matrix shared by both classes
-% 
-% Outputs:
-%
-% X = a 2 by (n1 + n2) matrix with first n1 columns containing class 1
-% feature vectors and the last n2 columns containing class 2 feature
-% vectors
-%
-% Y = a 1 by (n1 + n2) matrix with the first n1 values equal to 1 and the 
-% last n2 values equal to 2
-
-
-%%%%%%%%%%%%%%%%%%%%%%
-%Insert your code here
-%%%%%%%%%%%%%%%%%%%%%%
 u1 = [cos(theta); sin(theta)];
 u2 = [sin(theta); -cos(theta)];
 U = [u1 u2];
@@ -177,6 +155,57 @@ function [signal, noise, snr] = signal_noise_snr(X, Y, phi, want_class_density_p
 % Insert your code to project data along direction phi and then comput the
 % resulting signal power, noise power, and snr 
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% Defining each class
+X1 = X(:, find(Y==1));
+X2 = X(:, find(Y==2));
+n1 = width(X1);
+n2 = width(X2);
+n = n1 + n2;
+w = [cos(phi) sin(phi)];
+
+% Step 1) Find empirical means for each class
+mu1 = mean(X1');
+mu2 = mean(X2');
+
+% Step 2) Find empirical probablities of each class
+p1 = n1/n;
+p2 = n2/n;
+
+% Step 3) Find covariance matrices
+% Need to get centered means
+X1_centered = zeros(2, n1);
+for i = 1: n1
+    X1_centered(:, i) = X1(:, i) - mu1';
+end
+
+X2_centered = zeros(2, n2);
+for i = 1: n1
+    X2_centered(:, i) = X2(:, i) - mu2';
+end
+
+sigma1 = 1/n1 * X1_centered * X1_centered';
+sigma2 = 1/n2 * X2_centered * X2_centered';
+
+% Step 4) Find average covariance matrices
+sigmaAvg = p1 * sigma1 + p2 * sigma2;
+
+% Find means projected onto direction phi
+muz1 = w * mu1';
+muz2 = w * mu2';
+
+% Find signal (euclidean distance between means projected to phi)
+signal = (muz2 - muz1).^2;
+
+% Project variances onto direction phi
+sigmaz1 = w' * sigma1 * w;
+sigmaz2 = w' * sigma2 * w;
+
+% Find signal (euclidean distance between means projected to phi)
+noise = n1/n * sigmaz1 + n2/n * sigmaz2;
+
+% Find SNR (Signal to Noise Ratio)
+snr = ((w' * (mu2 - mu1)').^2) /  (w' * sigmaAvg * w );
 
 % ...
 
@@ -207,6 +236,70 @@ end
 function w_LDA = LDA(X, Y)
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Insert code to compute and return the LDA solution
+% Defining each class
+X1 = X(:, find(Y==1));
+X2 = X(:, find(Y==2));
+n1 = width(X1);
+n2 = width(X2);
+n = n1 + n2;
+
+% Need to find wlda 
+% Step 1) Find empirical means for each class
+mu1 = mean(X1');
+mu2 = mean(X2');
+
+% Step 2) Find empirical probablities of each class
+p1 = n1/n;
+p2 = n2/n;
+
+% Step 3) Find covariance matrices
+% Need to get centered means
+X1_centered = zeros(2, n1);
+for i = 1: n1
+    X1_centered(:, i) = X1(:, i) - mu1';
+end
+
+X2_centered = zeros(2, n2);
+for i = 1: n1
+    X2_centered(:, i) = X2(:, i) - mu2';
+end
+
+sigma1 = 1/n1 * X1_centered * X1_centered';
+sigma2 = 1/n2 * X2_centered * X2_centered';
+
+% Step 4) Find average covariance matrices
+sigmaAvg = p1 * sigma1 + p2 * sigma2;
+sigmaAvg_inverse = inv(sigmaAvg);
+
+% Step 5) Find wlda
+wlda = sigmaAvg_inverse * (mu2 - mu1)';
+
+% Find means projected onto wlda
+muz1 = wlda' * mu1';
+muz2 = wlda' * mu2';
+
+% Project means onto direction phi
+directionPhi = [cos(phi);sin(phi)];
+muz1_phi = directionPhi' * muz1';
+muz2_phi = directionPhi' * muz2';
+
+% Find signal (euclidean distance between means projected to phi)
+signal = (muz2_phi - muz1_phi).^2;
+
+% Find covariances projected onto wlda
+sigmaz1 = wlda' * sigma1 * wlda;
+sigmaz2 = wlda' * sigma2 * wlda;
+
+% Project variances onto direction phi
+sigmaz1_phi = directionPhi' * sigmaz1;
+sigmaz2_phi = directionPhi' * sigmaz2;
+
+% Find signal (euclidean distance between means projected to phi)
+noise = n1/n * sigmaz1_phi + n2/n * sigmaz2_phi;
+
+% Find SNR (Signal to Noise Ratio)
+snr = ((wlda' * (mu2 - mu1)').^2) /  (wlda' * sigmaAvg_inverse * wlda );
+
 % ...
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 

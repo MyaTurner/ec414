@@ -1,0 +1,41 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% ENG EC 414 (Ishwar) Spring 2022
+% HW 4.4
+% Mya Turner: mjturner@bu.edu
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+clear all; clc;
+rng('default')  % For reproducibility of data and results
+
+data = load('prostateStnd.mat');
+
+% Defining data
+Xtrain = data.Xtrain;
+ytrain = data.ytrain;
+Xtest = data.Xtest;
+ytest = data.ytest;
+names = data.names;
+offset_array = zeros(1, 9);
+scaling_array = zeros(1,9);
+
+fprintf('The mean and standard deviations of training data before normalization')
+% Finding means and standara deviation before normalization
+for i = 1: length(names)
+
+    offset_array(i) = mean(ytrain);
+    if( i == 9)
+        fprintf('The mean of label column %s is: %.3f \n',char(names(i)), mean(ytrain));
+        fprintf('The standard deviation of label column %s is: %.3f \n\n',char(names(i)), var(ytrain));
+        offset_array(i) = mean(ytrain);
+        break
+    end
+
+    feature = Xtrain(:, i);
+    fprintf('The mean of feature column %s is: %.3f \n',char(names(i)), mean(feature));
+    fprintf('The standard deviation of feature column %s is: %.3f \n\n',char(names(i)), var(feature));
+end
+
+% Normalize training data
+Xtrain = normalize(Xtrain);
+offset_array = zeros(1, 9);
+scaling_array = zeros(1,9);

@@ -145,7 +145,7 @@ title(['\theta = ',num2str(1),'\times \pi/6']);
 scatter(X2(1,:),X2(2,:),'^','fill','r');
 plot([mu1(1) mu1(1) + w_LDA(1)],[mu1(2) mu1(2) + w_LDA(2)], 'linewidth', 2);
 plot([mu1(1) mu1(1)+diff_means(1)],[mu1(2) mu1(2)+ diff_means(2)], 'linewidth', 2);
-legend('Class Data 1', 'Class Data 2', 'wlda', 'ux2 - ux1')
+legend('Class Data 1', 'Class Data 2', 'ux1 - ux2', 'wlda')
 hold off
 axis equal;
 

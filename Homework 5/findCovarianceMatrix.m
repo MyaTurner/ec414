@@ -1,4 +1,4 @@
-function Sx = findCovarianceMatrix(x)
+function [Sx, x_centered, mux] = findCovarianceMatrix(x)
 %FINDCOVARIANCEMATRIX Summary of this function goes here
 %   Detailed explanation goes here
 n = width(x);

@@ -219,7 +219,7 @@ function [lambda_top5, k_] = mjturner_hw5_2()
     % Visualize the 100th image
     subplot(1,2,1)
     %%%%% TODO
-    % Note unint8 not needed for this dataset to be visuliazed
+    % Note unint8 not needed for this
     imshow((reshape(X(:,120)', img_size)));
     title('image #120 in the dataset of numeral 3')
     

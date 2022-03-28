@@ -82,6 +82,7 @@ function [lambda_top5, k_] = mjturner_hw5_2()
 
     % Plot the eigenvalue number k against k
     subplot(1,2,1)
+    % Need to use the larger lambda matrix.  D sorted only goes to index 400
     lambdas = diag(lambda_mat);
     plot(k, lambdas(1 : d));
     title('Eigenvalues v k');
@@ -173,10 +174,7 @@ function [lambda_top5, k_] = mjturner_hw5_2()
         U(:, i) = (1 / sqrt(eigenvalues(i)) ) * x_centered * V_sorted(:, i); 
     end
     
-    % Finding lambda matrix by dual PCA
-    lambda_mat = zeros(d,d);
-    lambda_mat(1:n,1:n) = (1/n) * D_sorted;
-    
+   
     %% Compute principal components
     %%%%% TODO
     
@@ -243,10 +241,17 @@ function [lambda_top5, k_] = mjturner_hw5_2()
     % percentile grid corners
     
     %%%%% TODO (hint: Use xticks and yticks)
+    
+    x = real(first_percentiles);
+    y = real(second_percentiles);
 
     xlabel('Principal component 1')
     ylabel('Principal component 2')
     title('Image points closest to percentile grid corners')
+    % Not working !! can not figure out why.
+   % xticks(sort(x));
+   % yticks(sort(y))
+    scatter(first_pca(closest_coordinates),second_pca(closest_coordinates),'or','filled');
     hold off
     
     figure(6)
@@ -256,6 +261,15 @@ function [lambda_top5, k_] = mjturner_hw5_2()
     % corners. Use subplot to put all images in a single figure in a grid.
     
     %%%%% TODO
+    % creating a for loop to create subplots
+    for i = 1 : length(closest_coordinates)
+        
+        subplot(5 , 5 ,i)
+        % using method used to plot image 120 in dataset
+        imshow(reshape(X(:,closest_coordinates(i))', img_size));
+        plot_name = sprintf('Image %d', closest_coordinates(i));
+        title(plot_name);
+    end
     
     hold off    
 end

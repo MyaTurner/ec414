@@ -57,11 +57,26 @@ hold off
 
 %% 6.3b
 tmax = 6000;
+tbatch = 20;
 lambda = 0.1;
+gTheta = [];
+[d n] = size(X_data_train);
 
+for t = 20: 20: tmax
+        
+        % Find theta
+        currentTheta = SGD(X_data_train, Y_label_train, t, lambda);
+        currentG = (1 / n) * regularizedLogisticloss(X_data_train, Y_label_train, currentTheta, lambda);
+        gTheta = [currentG gTheta];
 
+end
 
-theta = SGD(X_data_train, Y_label_train, tmax, lambda);
+figure(3)
+plot(20 : 20 : 6000, gTheta);
+title('Regularized Logistic Loss Normalized by Total of Training Examples')
+xlabel('20t')
+ylabel('Regularized Logistic Loss Normalized')
+
 
 
 %% Functions
@@ -77,7 +92,7 @@ m = height(unique(Y_label_train));
 theta = zeros(d + 1, m);
 range = 1 : n;
 % Note a extended vector has an extra one at d + 1 position
-xExt = [X_data_train; ones(1, n)]; 
+xExt = [X_data_train; ones(1, n)];
 
 for t = 1 : tmax
     % Choose sample index
@@ -95,16 +110,6 @@ for t = 1 : tmax
             probabiltyDenominator = temp + probabiltyDenominator;
         end
         
-        tempY = Y_label_train;
-        
-        % Find places where y labels equal k and replace with 1
-        yjEqualsk = find(Y_label_train == k);
-        tempY(yjEqualsk) = 1;
-        
-        % Everywhere else place a 0
-        yjNotEqualsk = find(Y_label_train ~= k);
-        tempY(yjNotEqualsk) = 0;
-        
         % Continue computing gradients
         probability = probablityNumerator / probabiltyDenominator;
         
@@ -112,9 +117,8 @@ for t = 1 : tmax
         if probability < 10^(-10)
             probability = 10^(-10);
         end
-        
-        yjEqualsk = find(Y_label_train ~= k);
-        v(:, k) = 2 * lambda + n * (probability - tempY) * xExt(:, j);
+   
+        v(:, k) = 2 * lambda + n * (probability - Y_label_train(j)) .* xExt(:, j);
         
     end
     
@@ -125,3 +129,54 @@ for t = 1 : tmax
 end
 
 end
+
+function gTheta = regularizedLogisticloss(X_data_train, Y_label_train, theta, lambda)
+
+% Find the regularized logistic loss
+% Initializing variables
+[~, n] = size(X_data_train);
+% Note m is the number of unique labels present
+m = height(unique(Y_label_train));
+% Note a extended vector has an extra one at d + 1 position
+xExt = [X_data_train; ones(1, n)];
+
+summation = 0;
+% Find f0(theta)
+for l = 1 : m
+    distanceSquared= norm(theta(:, l)) ^ 2;
+    summation = summation + distanceSquared;
+    
+end
+
+f0 = lambda * summation;
+
+% Find fj(theta)
+fj = zeros(1, n);
+for j = 1 : n
+    
+    % Find minued in fj
+    firstSum = 0;
+    for l = 1 : m
+        metric = exp( theta(:, l)' * xExt(:, j) );
+        firstSum = firstSum + metric;
+    end
+
+    minuend = log(firstSum);
+
+    % Find subtrahend in fj
+    secondSum = 0;
+    for l = 1 : m
+        metric = Y_label_train(l) * theta(:, l)' * xExt(:, j);
+        secondSum = secondSum + metric;
+    end
+    
+    subtrahend = secondSum;
+
+    fj(j) = minuend - subtrahend;
+end
+
+% Find g(theta)
+gTheta = f0 + sum(fj);
+
+end
+

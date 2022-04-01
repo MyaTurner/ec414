@@ -56,13 +56,60 @@ end
 hold off
 
 %% 6.3b
+tmax = 10;
+lambda = 0.1;
+
+theta = SGD(X_data_train, Y_label_train, tmax, lambda);
 
 
 %% Functions
 
-function [outputArg1,outputArg2] = uh(inputArg1,inputArg2)
-%UH Summary of this function goes here
-%   Detailed explanation goes here
-outputArg1 = inputArg1;
-outputArg2 = inputArg2;
+function theta = SGD(X_data_train, Y_label_train, tmax, lambda)
+
+% Stochastic Gradient Descent for regularized multi-class Logistic-Loss
+
+% Initializing variables
+[d n] = size(X_data_train);
+% Note m is the number of unique labels present
+m = height(unique(Y_label_train));
+theta = zeros(d + 1, m);
+range = 1 : n;
+% Note a extended vector has an extra one at d + 1 position
+xExt = [X_data_train; ones(1, n)]; 
+
+for t = 1 : tmax
+    % Choose sample index
+    j = randsample(range, 1);
+    
+    % Initialize st
+    s_t = 0.01 / t;
+    
+    % Compute gradients
+    for k = 1 : m
+        probablityNumerator = exp(theta(:, k)') * xExt(:, j) ;
+        probabiltyDenominator = 0;
+        for l = 1 : m
+            temp = exp(theta(:, l)') * xExt(:, j);
+            probabiltyDenominator = temp + probabiltyDenominator;
+        end
+        
+        % Continue computing gradients
+        probability = probablityNumerator / probabiltyDenominator;
+        
+        % Check on probability
+        if probability < 10^(-10)
+            probability = 10^(-10);
+        end
+        
+        yjEqualsk = find(Y_label_train ~= k);
+        v(:, k) = 2 * lambda + n * (probability - (k == Y_label_train(j)) ) .* xExt(:, j);
+        
+    end
+    
+    % Update parameters
+    for k = 1 : m
+        theta(:, k) = theta(:, k) - s_t * v(:, k);
+    end
+end
+
 end

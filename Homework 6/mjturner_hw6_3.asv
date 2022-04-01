@@ -34,7 +34,7 @@ fprintf("\n")
 % (iii) Create 2D scatter plots of the dataset for all distinct pairs of features.
 plotNumber = 1;
 figure(2)
-s
+sgtitle('2D Scatter Plots of the Dataset for All Distinct Pairs of Features')
 hold on
 for i = 1 : n
     for j = (i + 1) : n
@@ -44,15 +44,63 @@ for i = 1 : n
         subplot(3, 2, plotNumber)
         scatter(feature1, feature2)
         plotName = sprintf('Feature %d vs. Feature %d', j, i);
+        xlabelName = sprintf('Feature %d', i);
+        ylabelName = sprintf('Feature %d', j);
         title(plotName)
-        xlabel(sprintf('Feature %d', i))
-        ylabel(sprintf('Feature %d', j))
+        xlabel(xlabelName)
+        ylabel(ylabelName)
+        plotNumber = plotNumber + 1;
     end
 end
 
 hold off
 
-
+%% 6.3b
+tmax = 10;
+lambda = 0.1;
 
 
 %% Functions
+
+function theta = SGD(X_data_train, Y_label_train, tmax, lambda)
+
+% Stochastic Gradient Descent for regularized multi-class Logistic-Loss
+
+% Initializing variables
+[d n] = size(X_data_train);
+theta = zeros(d + 1, n);
+range = 1 : n;
+% Note m is the number of unique labels present
+m = height(unique(Y_label_train));
+% Note a extended vector has an extra one at d + 1 position
+xExt = [X_data_train; ones(1, n)]; 
+
+for t = 1 : tmax
+    % Choose sample index
+    j = randsample(range, 1);
+    
+    % Compute gradients
+    for k = 1 : m
+        probablityNumerator = exp(theta(:, k)') * xExt(:, j) ;
+        probabiltyDenominator = 0;
+        for l = 1 : m
+            temp = exp(theta(:, l)') * xExt(:, j);
+            probabiltyDenominator = temp + probabiltyDenominator;
+        end
+        tempY = Y_label_train;
+        % Find places where y labels equal k and replace with 1
+        yjEqualsk = find(Y_label_train == k);
+        tempY(yjEqualsk) = 1;
+        % Everywhere else place a 0
+        yjNotEqualsk = find(Y_label_train ~= k);
+        tempY(yjNotEqualsk) = 0;
+        
+        % Continue 
+        probability = probablityNumerator / probabiltyDenominator;
+        yjEqualsk = find(Y_label_train ~= k);
+        v(:, k) = 2 * lambda + n * (probability - 
+        
+    end
+end
+
+end

@@ -56,8 +56,10 @@ end
 hold off
 
 %% 6.3b
-tmax = 10;
+tmax = 6000;
 lambda = 0.1;
+
+
 
 theta = SGD(X_data_train, Y_label_train, tmax, lambda);
 
@@ -93,6 +95,16 @@ for t = 1 : tmax
             probabiltyDenominator = temp + probabiltyDenominator;
         end
         
+        tempY = Y_label_train;
+        
+        % Find places where y labels equal k and replace with 1
+        yjEqualsk = find(Y_label_train == k);
+        tempY(yjEqualsk) = 1;
+        
+        % Everywhere else place a 0
+        yjNotEqualsk = find(Y_label_train ~= k);
+        tempY(yjNotEqualsk) = 0;
+        
         % Continue computing gradients
         probability = probablityNumerator / probabiltyDenominator;
         
@@ -102,7 +114,7 @@ for t = 1 : tmax
         end
         
         yjEqualsk = find(Y_label_train ~= k);
-        v(:, k) = 2 * lambda + n * (probability - (k == Y_label_train(j)) ) .* xExt(:, j);
+        v(:, k) = 2 * lambda + n * (probability - tempY) * xExt(:, j);
         
     end
     

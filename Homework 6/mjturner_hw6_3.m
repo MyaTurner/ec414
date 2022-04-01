@@ -74,7 +74,7 @@ end
 figure(3)
 plot(20 : 20 : 6000, gTheta);
 title('Regularized Logistic Loss Normalized by Total of Training Examples')
-xlabel('20t')
+xlabel('t')
 ylabel('Regularized Logistic Loss Normalized')
 
 
@@ -118,7 +118,7 @@ for t = 1 : tmax
             probability = 10^(-10);
         end
    
-        v(:, k) = 2 * lambda + n * (probability - Y_label_train(j)) .* xExt(:, j);
+        v(:, k) = 2 * lambda + n * (probability - (k == Y_label_train(j)) ) .* xExt(:, j);
         
     end
     
@@ -166,7 +166,7 @@ for j = 1 : n
     % Find subtrahend in fj
     secondSum = 0;
     for l = 1 : m
-        metric = Y_label_train(l) * theta(:, l)' * xExt(:, j);
+        metric = ( l == Y_label_train(j) ) * theta(:, l)' * xExt(:, j);
         secondSum = secondSum + metric;
     end
     

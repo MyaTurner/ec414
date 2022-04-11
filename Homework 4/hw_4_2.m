@@ -13,17 +13,20 @@ Y = y - muy * ones(n,1)';
 Sx = 1/n * X * X';
 Sxy = 1/n * X * Y';
 
-wOLS = inv(Sx)*Sxy
-bOLS = muy - wOLS'*mux
+wOLS = inv(Sx)*Sxy;
+bOLS = muy - wOLS'*mux;
 
 %(b)
-x_cubed = x.^3;
-Sx_cubed = 1/n * (x_cubed * x_cubed');
+theta = [x.^3; x.^2];
 
-Sxy_cubed = 1/n * x_cubed * Y';
+mu_theta = mean(theta');
 
-x_squared = x.^2;
-mux_squared = (sum(x_squared,2)) * 1/n;
-X_squared = x_squared - mux_squared * ones(n,1)';
-Sx_squared = 1/n * (x_squared * x_squared');
-Sxy_squared = 1/n * X_squared * Y';
+theta_centered = theta - mu_theta';
+
+S_theta = 1/n * theta_centered * theta_centered';
+
+S_theta_inv = inv(S_theta);
+S_theta_y = 1/n * theta_centered * y';
+
+wpls = S_theta_inv * S_theta_y;
+

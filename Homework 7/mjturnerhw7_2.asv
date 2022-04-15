@@ -9,7 +9,7 @@ Xtest = [X_data_test(:, 2) X_data_test(:, 4);];
 tmax = 2 * 10^5;
 C = 1.2;
 
-% Creating Class variables (Training)
+% Creating Class variables
 % Class 1 v Class 2
 Data1v2 = Xtrain(find(Y_label_train == 1 | Y_label_train == 2 ), :);
 Data1v2_labels = Y_label_train(Y_label_train == 1 | Y_label_train == 2); % Class 1 will be +1
@@ -26,25 +26,6 @@ Data2v3_labels(Y_label_train == 3) = -1; % Class 3 will be -1
 Data1v3 = Xtrain(find(Y_label_train == 1 | Y_label_train == 3 ), :);
 Data1v3_labels = Y_label_train(Y_label_train == 1 | Y_label_train == 3); % Class 1 will be +1
 Data1v3_labels(Y_label_train == 3) = -1; % Class 3 will be -1
-
-% Creating Classs variables (Test)
-% Class 1 v Class 2
-Data1v2_test = Xtest(find(Y_label_test == 1 | Y_label_test == 2 ), :);
-Data1v2_labels_test = Y_label_test(Y_label_test == 1 | Y_label_test == 2); % Class 1 will be +1
-Data1v2_labels_test(Y_label_test == 2) = -1; % Class 2 will be -1
-
-% Class 2 v Class 3
-Data2v3_test = Xtest(find(Y_label_test == 2 | Y_label_test == 3 ), :);
-Data2v3_labels_test = Y_label_test(Y_label_test == 2 | Y_label_test == 3);
-Data2v3_labels_test(Y_label_test == 2) = +1; % Class 2 will be +1
-Data2v3_labels_test(Y_label_test == 3) = -1; % Class 3 will be -1
-
-
-% Class 1 v Class 3
-Data1v3_test = Xtest(find(Y_label_test == 1 | Y_label_test == 3 ), :);
-Data1v3_labels_test = Y_label_test(Y_label_test == 1 | Y_label_test == 3); % Class 1 will be +1
-Data1v3_labels_test(Y_label_test == 3) = -1; % Class 3 will be -1
-
 
 
 
@@ -73,16 +54,10 @@ for i = 1 : 3
     % Plot sample-normalized cost for each binary classifier
     figure(i)
     plot(1 : 1000 : 200000, cost_array);
-    plotName = sprintf('Sample Normalized Cost for Binary Classifier %d', i);
-    ylabelName = sprintf('Binary Classifier %d', i);
-    title(plotName)
+    title('Sample Normalized')
     xlabel('t')
-    ylabel('Sample Normalized Cost')
+    ylabel('Regularized Logistic Loss Normalized')
 end
-
-%% 7.2b
-
-% Find training CCR
 
  
 

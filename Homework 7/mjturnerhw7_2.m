@@ -45,8 +45,6 @@ Data1v3_labels_test = Y_label_test(Y_label_test == 1 | Y_label_test == 3); % Cla
 Data1v3_labels_test(Data1v3_labels_test == 3) = -1; % Class 3 will be -1
 
 
-
-
 % Finding theta or w for SVM Binary classifiers (Training)
 theta_array = [];
 classes_train = [Data1v2 Data2v3 Data1v3];
@@ -72,19 +70,19 @@ for i = 1 : 2 : 6
         cost = (1 / n) * costFunction(classes_train(:, i : i + 1), classesLabels_train(:, j), theta_array(:, j), C);
         cost_array = [cost_array cost];
     end
-    j = j + 1;
+   
     % Plot sample-normalized cost for each binary classifier
-    figure(i)
+    figure(j)
     plot(1 : 1000 : 200000, cost_array);
-    plotName = sprintf('Sample Normalized Cost for Binary Classifier %d', i);
+    plotName = sprintf('Sample Normalized Cost for Binary Classifier %d', j);
     title(plotName)
     xlabel('t')
     ylabel('Sample Normalized Cost')
     cost_array = [];
+     j = j + 1;
 end
 
 %% 7.2b
-
 % Find training CCR
 ccr_training = [];
 ccr_array_training = [];
@@ -98,18 +96,19 @@ for i = 1 : 2 : 6
         [ccr, predictedLabels_training] = CCR(classes_train(:, i : i + 1), classesLabels_train(:, j), theta_array(:, j));
         ccr_training = [ccr_training ccr];
     end
-    j = j + 1;
+   
     
-    % Plot sample-normalized cost for each binary classifier
-    figure(3 + i)
+    % Plot the training ccr for each binary classifier
+    figure(3 + j)
     plot(1 : 1000 : 200000, ccr_training);
-    plotName = sprintf('CCR Training for Binary Classifier %d', i);
+    plotName = sprintf('CCR Training for Binary Classifier %d', j);
     title(plotName)
     xlabel('t')
     ylabel('CCR Training')
     ccr_array_training = [ccr_array_training ccr_training];
     ccr_training = [];
     predictedLabels_array_training = [predictedLabels_array_training  predictedLabels_training];
+     j = j + 1;
 end
 
 %% 7.2c
@@ -130,23 +129,23 @@ for i = 1 : 2 : 6
         [ccr, predictedLabels_test] = CCR(classes_test(:, i : i + 1), classesLabels_test(:, j), theta_array(:, j));
         ccr_test = [ccr_test ccr];
     end
-     j = j + 1;
+ 
     
-    % Plot sample-normalized cost for each binary classifier
-    figure(6 + i)
+    % Plot the test ccr for each binary classifier
+    figure(6 + j)
     plot(1 : 1000 : 200000, ccr_test);
-    plotName = sprintf('CCR Test for Binary Classifier %d', i);
+    plotName = sprintf('CCR Test for Binary Classifier %d', j);
     title(plotName)
     xlabel('t')
     ylabel('CCR Test')
     ccr_array_test = [ccr_array_test ccr_test];
     ccr_test = [];
     predictedLabels_array_test = [predictedLabels_array_test predictedLabels_test];
+        j = j + 1;
 
 end
 
 %% 7.2d
-
 % Reporting final values
 % theta
 for i = 1 : 3
@@ -181,14 +180,139 @@ for i = 1 : 3
 end
 
 %% 7.2e
+% Implement All Pairs Methodology (Training)
+[n, d] = size(classesLabels_train);
+yAllPairs_training = zeros(n, d);
 
-% Implement All Pairs Methodology
+for j = 1 : d
+    
+    for i = 1 : n
+        classfier = yAllPairs_training(:, j);
+        
+        % Find the classifer for Data1v2.  Note Class 1 is + 1 and Class 2 is -1.
+        if(j == 1)
+            % Should give back 1 when ytrain is 1 and then 2 when ytrain is -1.
+            classfier(i) = -(1 / 2) * classesLabels_train(i, j) + (3 / 2);
+        end
+        
+        % Find the classifer for Data2v3.  Note Class 2 is + 1 and Class 3 is -1.
+        if(j == 2)
+            % Should give back 1 when ytrain is 2 and then 3 when ytrain is -1.
+            classfier(i) = -(1 / 2) * classesLabels_train(i, j) + (5 / 2);
+        end
+        
+        % Find the classifer for Data1v3.  Note Class 1 is + 1 and Class 3 is -1.
+        if(j == 3)
+            % Should give back 1 when ytrain is 1 and then 3 when ytrain is -1.
+            classfier(i) = -1 * classesLabels_train(i, j) + 2;
+        end
+        
+    end
+    
+end
 
+yAllPairs_training = mode(yAllPairs_training')';
+
+% Implement All Pairs Methodology (Test)
+[n, d] = size(classesLabels_test);
+yAllPairs_test = zeros(n, d);
+
+for j = 1 : d
+    
+    for i = 1 : n
+        classfier = yAllPairs_test(:, j);
+        
+        % Find the classifer for Data1v2.  Note Class 1 is + 1 and Class 2 is -1.
+        if(j == 1)
+            % Should give back 1 when ytrain is 1 and then 2 when ytrain is -1.
+            classfier(i) = -(1 / 2) * classesLabels_test(i, j) + (3 / 2);
+        end
+        
+        % Find the classifer for Data2v3.  Note Class 2 is + 1 and Class 3 is -1.
+        if(j == 2)
+            % Should give back 1 when ytrain is 2 and then 3 when ytrain is -1.
+            classfier(i) = -(1 / 2) * classesLabels_test(i, j) + (5 / 2);
+        end
+        
+        % Find the classifer for Data1v3.  Note Class 1 is + 1 and Class 3 is -1.
+        if(j == 3)
+            % Should give back 1 when ytrain is 1 and then 3 when ytrain is -1.
+            classfier(i) = -1 * classesLabels_test(i, j) + 2;
+        end
+        
+    end
+    
+end
+
+yAllPairs_test = mode(yAllPairs_test')';
+
+
+% Find training CCR
+ccr_training = [];
+ccr_array_training = [];
+predictedLabels_array_training = [];
+j = 1;
  
+for i = 1 : 2 : 6
+    
+    for t = 1 : 1000 : 200000
+        [n, ~] = size(classes_train(:, i : i + 1));
+        [ccr, predictedLabels_training] = CCR(classes_train(:, i : i + 1), yAllPairs_training, theta_array(:, j));
+        ccr_training = [ccr_training ccr];
+    end
+    j = j + 1;
+    
+    ccr_array_training = [ccr_array_training ccr_training];
+    ccr_training = [];
+    predictedLabels_array_training = [predictedLabels_array_training  predictedLabels_training];
+end
+
+% Find the test ccr
+j = 1;
+for i = 1 : 2 : 6
+    
+    for t = 1 : 1000 : 200000
+        [n, ~] = size(classes_test(:, i : i + 1));
+        [ccr, predictedLabels_test] = CCR(classes_test(:, i : i + 1), yAllPairs_test, theta_array(:, j));
+        ccr_test = [ccr_test ccr];
+    end
+     j = j + 1;
+    
+    ccr_array_test = [ccr_array_test ccr_test];
+    ccr_test = [];
+    predictedLabels_array_test = [predictedLabels_array_test predictedLabels_test];
+
+end
+
+% Reporting final values
+% The training CCR
+for i = 1 : 3
+    fprintf('\n Final training CCR (All Pairs Method) for Binary Classifier %d  \n', i)
+    disp(ccr_array_training(end, i))
+end
+
+% the test CCR
+for i = 1 : 3
+    fprintf('\n Final test CCR (All Pairs Method) for Binary Classifier %d \n', i)
+    disp(ccr_array_test(end, i))
+end
+
+% Trainig confusion matrix (work on)
+for i = 1 : 3
+    fprintf('\n Training Confusion matrix (All Pairs Method) for Binary Classifier %d \n', i)
+    confusionmatTraining = confusionmat(yAllPairs_training, predictedLabels_array_training(:, i));
+    disp(confusionmatTraining)
+end
+
+% Test confusion matrix (work on)
+for i = 1 : 3
+    fprintf('\n Test Confusion matrix (All Pairs Method) for Binary Classifier %d \n', i)
+    confusionmatTest = confusionmat(yAllPairs_test, predictedLabels_array_test(:, i));
+    disp(confusionmatTest)
+end
 
 
-
-%% Functions (NEED EDITS FOR 7.2)
+%% Functions
 
 function theta = SSGD(Xtrain, Y_label_train, tmax, C)
 

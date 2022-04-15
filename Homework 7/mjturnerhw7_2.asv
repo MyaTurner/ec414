@@ -45,30 +45,32 @@ Data1v3_labels_test = Y_label_test(Y_label_test == 1 | Y_label_test == 3); % Cla
 Data1v3_labels_test(Data1v3_labels_test == 3) = -1; % Class 3 will be -1
 
 
-
-
 % Finding theta or w for SVM Binary classifiers (Training)
 theta_array = [];
 classes_train = [Data1v2 Data2v3 Data1v3];
 classesLabels_train = [Data1v2_labels Data2v3_labels Data1v3_labels];
 
+ j = 1;
 for i = 1 : 2 : 6
-    theta = SSGD(classes_train(:, i : i + 1), classesLabels_train(:, i : i + 1), tmax, C);
+
+    theta = SSGD(classes_train(:, i : i + 1), classesLabels_train(:, j), tmax, C);
     theta_array = [theta_array theta];
+    j = j + 1;
 end
 
 %% 7.2a
 % Find sample-normalized cost for each binary classifier
 cost_array = [];
-
+j = 1;
 for i = 1 : 2 : 6
     
     for t = 1 : 1000 : 200000
-        [n, ~] = size(classes_train(i));
-        cost = (1 / n) * costFunction(classes_train(:, i : i + 1), classesLabels_train(:, i : i + 1), theta_array(i), C);
+        
+        [n, ~] = size(classes_train(:, i : i + 1));
+        cost = (1 / n) * costFunction(classes_train(:, i : i + 1), classesLabels_train(:, j), theta_array(:, j), C);
         cost_array = [cost_array cost];
     end
-    
+    j = j + 1;
     % Plot sample-normalized cost for each binary classifier
     figure(i)
     plot(1 : 1000 : 200000, cost_array);
@@ -80,19 +82,20 @@ for i = 1 : 2 : 6
 end
 
 %% 7.2b
-
 % Find training CCR
 ccr_training = [];
 ccr_array_training = [];
 predictedLabels_array_training = [];
-
+j = 1;
+ 
 for i = 1 : 2 : 6
     
     for t = 1 : 1000 : 200000
-        [n, ~] = size(classes_train(i));
-        [ccr, predictedLabels_training] = CCR(classes_train(:, i : i + 1), classesLabels_train(:, i : i + 1), theta_array(i));
+        [n, ~] = size(classes_train(:, i : i + 1));
+        [ccr, predictedLabels_training] = CCR(classes_train(:, i : i + 1), classesLabels_train(:, j), theta_array(:, j));
         ccr_training = [ccr_training ccr];
     end
+    j = j + 1;
     
     % Plot sample-normalized cost for each binary classifier
     figure(3 + i)
@@ -101,9 +104,9 @@ for i = 1 : 2 : 6
     title(plotName)
     xlabel('t')
     ylabel('CCR Training')
-    ccr_array_training = [ccr_array_training ; ccr_training];
+    ccr_array_training = [ccr_array_training ccr_training];
     ccr_training = [];
-    predictedLabels_array_training = [predictedLabels_array_training;  predictedLabels_training];
+    predictedLabels_array_training = [predictedLabels_array_training  predictedLabels_training];
 end
 
 %% 7.2c
@@ -115,14 +118,16 @@ classesLabels_test = [Data1v2_labels_test Data2v3_labels_test Data1v3_labels_tes
 ccr_test = [];
 ccr_array_test = [];
 predictedLabels_array_test = [];
-
+ j = 1;
+ 
 for i = 1 : 2 : 6
     
     for t = 1 : 1000 : 200000
-        [n, ~] = size(classes_test(i));
-        [ccr, predictedLabels_test] = CCR(classes_test(:, i : i + 1), classesLabels_test(:, i : i + 1), theta_array(i));
+        [n, ~] = size(classes_test(:, i : i + 1));
+        [ccr, predictedLabels_test] = CCR(classes_test(:, i : i + 1), classesLabels_test(:, j), theta_array(:, j));
         ccr_test = [ccr_test ccr];
     end
+     j = j + 1;
     
     % Plot sample-normalized cost for each binary classifier
     figure(6 + i)
@@ -131,14 +136,13 @@ for i = 1 : 2 : 6
     title(plotName)
     xlabel('t')
     ylabel('CCR Test')
-    ccr_array_test = [ccr_array_test ; ccr_test];
+    ccr_array_test = [ccr_array_test ccr_test];
     ccr_test = [];
-    predictedLabels_array_test = [predictedLabels_array_test; predictedLabels_test];
+    predictedLabels_array_test = [predictedLabels_array_test predictedLabels_test];
 
 end
 
 %% 7.2d
-
 % Reporting final values
 % theta
 for i = 1 : 3
@@ -148,13 +152,13 @@ end
 
 % The training CCR
 for i = 1 : 3
-    fprintf('\n Final training CCR \n')
+    fprintf('\n Final training CCR for Binary Classifier %d  \n', i)
     disp(ccr_array_training(end, i))
 end
 
 % the test CCR
 for i = 1 : 3
-    fprintf('\n Final test CCR \n')
+    fprintf('\n Final test CCR for Binary Classifier %d \n', i)
     disp(ccr_array_test(end, i))
 end
 
@@ -173,14 +177,64 @@ for i = 1 : 3
 end
 
 %% 7.2e
-
 % Implement All Pairs Methodology
+[n, d] = size(classesLabels_train);
+yAllPairs = zeros(n, d);
 
- 
+for j = 1 : d
+    
+    for i = 1 : n
+        classfier = yAllPairs(:, j);
+        
+        % Find the classifer for Data1v2.  Note Class 1 is + 1 and Class 2 is -1.
+        if(j == 1)
+            % Should give back 1 when ytrain is 1 and then 2 when ytrain is -1.
+            classfier(i) = -(1 / 2) * classesLabels_train(i, j) + (3 / 2);
+        end
+        
+        % Find the classifer for Data2v3.  Note Class 2 is + 1 and Class 3 is -1.
+        if(j == 2)
+            % Should give back 1 when ytrain is 2 and then 3 when ytrain is -1.
+            classfier(i) = -(1 / 2) * classesLabels_train(i, j) + (5 / 2);
+        end
+        
+        % Find the classifer for Data1v3.  Note Class 1 is + 1 and Class 3 is -1.
+        if(j == 3)
+            % Should give back 1 when ytrain is 1 and then 3 when ytrain is -1.
+            classfier(i) = -1 * classesLabels_train(i, j) + 2;
+        end
+        
+    end
+    
+end
+
+yAllPairs = mode(yAllPairs')';
+
+% 
+for i = 1 : 2 : 6
+    
+    for t = 1 : 1000 : 200000
+        [n, ~] = size(classes_test(:, i : i + 1));
+        [ccr, predictedLabels_test] = CCR(classes_test(:, i : i + 1), classesLabels_test(:, j), theta_array(:, j));
+        ccr_test = [ccr_test ccr];
+    end
+     j = j + 1;
+    
+    % Plot sample-normalized cost for each binary classifier
+    figure(6 + i)
+    plot(1 : 1000 : 200000, ccr_test);
+    plotName = sprintf('CCR Test for Binary Classifier %d', i);
+    title(plotName)
+    xlabel('t')
+    ylabel('CCR Test')
+    ccr_array_test = [ccr_array_test ccr_test];
+    ccr_test = [];
+    predictedLabels_array_test = [predictedLabels_array_test predictedLabels_test];
+
+end
 
 
-
-%% Functions (NEED EDITS FOR 7.2)
+%% Functions
 
 function theta = SSGD(Xtrain, Y_label_train, tmax, C)
 
@@ -191,7 +245,7 @@ function theta = SSGD(Xtrain, Y_label_train, tmax, C)
 % Note m is the number of unique labels present
 m = height(unique(Y_label_train));
 theta = zeros(d + 1, 1);
-range = 1 : d;
+range = 1 : n;
 % Note a extended vector has an extra one at n + 1 position
 xExt = [Xtrain ones(n, 1)];
 % Creating a extended identity matrix
@@ -209,8 +263,8 @@ for t = 1 : tmax
     % Compute gradients
     v = idExt * theta;
     
-    if( Y_label_train(j) * theta' * xExt(:, j) < 1 )
-        v = v - n * C * Y_label_train(j) * xExt(:, j);
+    if( Y_label_train(j) * theta' * xExt(j, :)' < 1 )
+        v = v - n * C * Y_label_train(j) * xExt(j, :)';
     end
     
     % Update parameters
@@ -227,7 +281,7 @@ function gTheta = costFunction(X_data_train, Y_label_train, theta, C)
 % Initializing variables
 [n, d] = size(X_data_train);
 % Note a extended vector has an extra one at n + 1 position
-xExt = [X_data_train; ones(1, d)];
+xExt = [X_data_train ones(n, 1)];
 
 % Find f0(theta) % Do not know what is w, assuming is theta
 f0 = (1 / 2) * norm(theta).^2;
@@ -236,10 +290,10 @@ f0 = (1 / 2) * norm(theta).^2;
 fj = zeros(1, d);
 for j = 1 : n
     
-    if( 1 - Y_label_train(j) * theta' * xExt(:, j) < 0 )
+    if( 1 - Y_label_train(j) * theta' * xExt(j, :)' < 0 )
         MAX = 0;
     else
-        MAX = 1 - Y_label_train(j) * theta' * xExt(:, j);
+        MAX = 1 - Y_label_train(j) * theta' * xExt(j, :)';
     end
     
     fj = C * MAX;
@@ -256,13 +310,12 @@ function [ccr, y_hat] = CCR(X_data_train, Y_label_train, theta)
 % Initializing variables
 [n, d] = size(X_data_train);
 % Note a extended vector has an extra one at d + 1 position
-xExt = [X_data_train; ones(1, d)];
+xExt = [X_data_train ones(n, 1)];
 
 % Find the decision rule for a binary SVM
-y_hat = zeros(1, d);
-for j = 1 : d
-    sign_vector = sign( theta' * xExt(:, j) );
-    y_hat(j) = sign_vector(1);
+y_hat = zeros(n, 1);
+for j = 1 : n
+    y_hat(j) = sign( theta' * xExt(j, :)' );
 end
     
 % CCR

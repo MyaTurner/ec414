@@ -187,27 +187,27 @@ yAllPairs_training = zeros(n, d);
 for j = 1 : d
     
     for i = 1 : n
-        classfier = yAllPairs_training(:, j);
         
         % Find the classifer for Data1v2.  Note Class 1 is + 1 and Class 2 is -1.
         if(j == 1)
             % Should give back 1 when ytrain is 1 and then 2 when ytrain is -1.
-            classfier(i) = -(1 / 2) * classesLabels_train(i, j) + (3 / 2);
+            yAllPairs_training(i, j) = -(1 / 2) * classesLabels_train(i, j) + (3 / 2);
         end
         
         % Find the classifer for Data2v3.  Note Class 2 is + 1 and Class 3 is -1.
         if(j == 2)
             % Should give back 1 when ytrain is 2 and then 3 when ytrain is -1.
-            classfier(i) = -(1 / 2) * classesLabels_train(i, j) + (5 / 2);
+            yAllPairs_training(i, j) = -(1 / 2) * classesLabels_train(i, j) + (5 / 2);
         end
         
         % Find the classifer for Data1v3.  Note Class 1 is + 1 and Class 3 is -1.
         if(j == 3)
             % Should give back 1 when ytrain is 1 and then 3 when ytrain is -1.
-            classfier(i) = -1 * classesLabels_train(i, j) + 2;
+            yAllPairs_training(i, j) = -1 * classesLabels_train(i, j) + 2;
         end
         
     end
+    
     
 end
 
@@ -220,24 +220,24 @@ yAllPairs_test = zeros(n, d);
 for j = 1 : d
     
     for i = 1 : n
-        classfier = yAllPairs_test(:, j);
+        
         
         % Find the classifer for Data1v2.  Note Class 1 is + 1 and Class 2 is -1.
         if(j == 1)
             % Should give back 1 when ytrain is 1 and then 2 when ytrain is -1.
-            classfier(i) = -(1 / 2) * classesLabels_test(i, j) + (3 / 2);
+            yAllPairs_test(i, j) = -(1 / 2) * classesLabels_test(i, j) + (3 / 2);
         end
         
         % Find the classifer for Data2v3.  Note Class 2 is + 1 and Class 3 is -1.
         if(j == 2)
             % Should give back 1 when ytrain is 2 and then 3 when ytrain is -1.
-            classfier(i) = -(1 / 2) * classesLabels_test(i, j) + (5 / 2);
+            yAllPairs_test(i, j) = -(1 / 2) * classesLabels_test(i, j) + (5 / 2);
         end
         
         % Find the classifer for Data1v3.  Note Class 1 is + 1 and Class 3 is -1.
         if(j == 3)
             % Should give back 1 when ytrain is 1 and then 3 when ytrain is -1.
-            classfier(i) = -1 * classesLabels_test(i, j) + 2;
+            yAllPairs_test(i, j) = -1 * classesLabels_test(i, j) + 2;
         end
         
     end

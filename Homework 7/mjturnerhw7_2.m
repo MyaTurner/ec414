@@ -181,71 +181,10 @@ end
 
 %% 7.2e
 % Implement All Pairs Methodology (Training)
-[n, d] = size(classesLabels_train);
-yAllPairs_training = zeros(n, d);
-
-for j = 1 : d
-    
-    for i = 1 : n
-        
-        % Find the classifer for Data1v2.  Note Class 1 is + 1 and Class 2 is -1.
-        if(j == 1)
-            % Should give back 1 when ytrain is 1 and then 2 when ytrain is -1.
-            yAllPairs_training(i, j) = -(1 / 2) * classesLabels_train(i, j) + (3 / 2);
-        end
-        
-        % Find the classifer for Data2v3.  Note Class 2 is + 1 and Class 3 is -1.
-        if(j == 2)
-            % Should give back 1 when ytrain is 2 and then 3 when ytrain is -1.
-            yAllPairs_training(i, j) = -(1 / 2) * classesLabels_train(i, j) + (5 / 2);
-        end
-        
-        % Find the classifer for Data1v3.  Note Class 1 is + 1 and Class 3 is -1.
-        if(j == 3)
-            % Should give back 1 when ytrain is 1 and then 3 when ytrain is -1.
-            yAllPairs_training(i, j) = -1 * classesLabels_train(i, j) + 2;
-        end
-        
-    end
-    
-    
-end
-
-yAllPairs_training = mode(yAllPairs_training')';
+yAllPairs_training = allpairs(classes_train, theta_array, classesLabels_train);
 
 % Implement All Pairs Methodology (Test)
-[n, d] = size(classesLabels_test);
-yAllPairs_test = zeros(n, d);
-
-for j = 1 : d
-    
-    for i = 1 : n
-        
-        
-        % Find the classifer for Data1v2.  Note Class 1 is + 1 and Class 2 is -1.
-        if(j == 1)
-            % Should give back 1 when ytrain is 1 and then 2 when ytrain is -1.
-            yAllPairs_test(i, j) = -(1 / 2) * classesLabels_test(i, j) + (3 / 2);
-        end
-        
-        % Find the classifer for Data2v3.  Note Class 2 is + 1 and Class 3 is -1.
-        if(j == 2)
-            % Should give back 1 when ytrain is 2 and then 3 when ytrain is -1.
-            yAllPairs_test(i, j) = -(1 / 2) * classesLabels_test(i, j) + (5 / 2);
-        end
-        
-        % Find the classifer for Data1v3.  Note Class 1 is + 1 and Class 3 is -1.
-        if(j == 3)
-            % Should give back 1 when ytrain is 1 and then 3 when ytrain is -1.
-            yAllPairs_test(i, j) = -1 * classesLabels_test(i, j) + 2;
-        end
-        
-    end
-    
-end
-
-yAllPairs_test = mode(yAllPairs_test')';
-
+yAllPairs_test = allpairs(classes_test, theta_array, classesLabels_test);
 
 % Find training CCR
 ccr_training = [];
@@ -398,4 +337,57 @@ end
     
 % CCR
 ccr = (1 / n) * sum(Y_label_train == y_hat);
+end
+
+function yAllPairs = allpairs(classes_train, theta_array, classesLabel)
+
+% Implement 3-class classifier using the All Pairs methodology
+[n, d] = size(classesLabel);
+yAllPairs = zeros(n, d);
+
+% Counter for columns
+j = 1;
+
+% Do for each class
+for index = 1 : 2 : 6
+
+    Xtrain = classes_train(:, index : index + 1);
+    
+    % Initializing variables
+    [n, ~] = size(Xtrain);
+    % Note a extended vector has an extra one at d + 1 position
+    xExt = [Xtrain ones(n, 1)];
+    y_pred = zeros(n, 1);
+
+    % Get y predictions for all points
+    for i = 1 : n
+        y_pred(i) = sign(theta_array(:, j)' * xExt(i, :)');
+    end
+    
+    for i = 1 : n
+        
+        % Find the classifer for Data1v2.  Note Class 1 is + 1 and Class 2 is -1.
+        if(j == 1)
+            % Should give back 1 when ytrain is 1 and then 2 when ytrain is -1.
+            yAllPairs(i, j) = -(1 / 2) * y_pred(i) + (3 / 2);
+        end
+        
+        % Find the classifer for Data2v3.  Note Class 2 is + 1 and Class 3 is -1.
+        if(j == 2)
+            % Should give back 1 when ytrain is 2 and then 3 when ytrain is -1.
+            yAllPairs(i, j) = -(1 / 2) * y_pred(i) + (5 / 2);
+        end
+        
+        % Find the classifer for Data1v3.  Note Class 1 is + 1 and Class 3 is -1.
+        if(j == 3)
+            % Should give back 1 when ytrain is 1 and then 3 when ytrain is -1.
+            yAllPairs(i, j) = -1 * y_pred(i) + 2;
+        end
+    end
+    
+    j = j + 1;
+end
+
+% Get All Pairs classifer which is the most frequent occuring class
+yAllPairs = mode(yAllPairs')';
 end

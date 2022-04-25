@@ -1,0 +1,111 @@
+%% Homework 8.2
+
+% Load dataset
+load('kernel-svm-2rings.mat')
+
+% 8.2(a)
+
+% Let n be the number of examples in R^d space
+% n (j) is 200 and d (i) is 2
+[d, n] = size(x);
+alpha = 1; % Need to find alpha
+alpha = ones(n, 1) * alpha;
+
+
+% Initalize values
+t_max = 1000;
+C = 256 / n;
+sigma = 0.5;
+
+% Find K
+K = RBF(n, x, sigma); % Implemented not with rbf
+
+% Find psi
+psi = SSGD(x, y, K, t_max, C);
+
+
+%% Functions
+
+% Radial Basis Function (RBF) Kernel % Implemented wrong, need to fix
+function K = RBF(n, x, sigma)
+
+% Find the kernel for each pair of feature vectors
+% Let K be a n x n matrix
+K = zeros(n);
+X_transposed = x';
+X = x;
+
+% for i = 1 : n
+%     j = i;
+%     K(i,j) = exp( (- 1 / (2 * sigma)) * norm(X_transposed(i,:) - X(:,j ).^ 2) );
+% end
+
+K = x' * x;
+end
+
+% Hinge Function
+function result = hinge(yj, psi, Kj_ext)
+
+% Must find t, equation given in HW
+t = yj * (alpha' * (x' * xj) ) + b;
+
+result = max( [0, (1-t)] );
+end
+
+% Stochastic Sub-Gradient Descent for binary Kernel SVM
+function psi = SSGD(x, y, K, t_max, C)
+
+% Intialize variables
+[~, n] = size(x);
+psi = zeros(n + 1, 1);
+range = 1 : n;
+
+for t = 1 : t_max
+    
+    % Choose sample index
+    j = randsample(range, 1);
+    
+    % Initialize st
+    s_t = 0.256 / t;
+    
+    % Creating a extended K matrix with zeros
+    K_w_zeros = zeros(201);
+    K_w_zeros(1 : 200, 1: 200) = K;
+    
+    % Creating Kj extended with a 1
+    Kj_ext = [K(:,j); 1];
+    
+    % Compute gradients
+    v = K_w_zeros * psi;
+    
+    % Update parameters if true
+    if(y(j) * psi' * Kj_ext < 1)
+        v = v - n * C * y(j) * Kj_ext;
+    end
+    
+    % Update psi always
+    psi = psi - s_t * v;
+end
+end
+
+% Soft-Margin SVM
+function gPsi = costFunction(psi, K, y)
+
+% Creating a extended K matrix with zeros
+K_w_zeros = zeros(201);
+K_w_zeros(1 : 200, 1: 200) = K;
+
+% Find f0(psi)
+f0 = (1/2) * psi' * K_w_zeros * psi;
+
+% Find fj(psi)
+sum = 0;
+for j = 1 : n
+    
+    % Creating Kj extended with a 1
+    Kj_ext = [K(:,j); 1];
+    temp = C * hinge();
+end
+
+
+end

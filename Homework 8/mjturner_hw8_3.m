@@ -17,23 +17,23 @@ k = 2;
 K = RBF(n, X, sigma);
 
 % Run kernel k means
-kernel_kmeans(X, k, K, n, d, e)
+kernel_kmeans(X, k, K, n, e)
 
 %% Functions
 
 % Kernel k-means Clustering Algorithm
-function kernel_kmeans(X, k, K, n, d, e)
+function kernel_kmeans(X, k, K, n, e)
 
 % Initialize variables
 y = zeros(n, 1);
-mu = zeros(n, d);
+mu = zeros(n, k);
 
-% Set centeres
+% Set centers
 for l = 1 : k
-    mu(:, l) = rand(n,1);
+    mul = rand(n,1);
     
     % Normalize centers
-    mu(:, l) = mu(:, l) / norm( mu(:, l) );
+    mu(:, l) = mul / norm(mul);
     
 end
 
@@ -43,18 +43,20 @@ STOP = false;
 iteration = 0;
 while(~STOP)
     
+    iteration = iteration + 1;
+    
     % Update labels
     % For each feature vector
     for j = 1 : n
         
-        cluster = zeros(k, 1);
+        cluster = zeros(1, k);
         
         for l = 1 : k
             
-            current_mu = mu(:, l);
+            mul = mu(:, l);
             
             % Find best cluster (should be 1 or 2)
-            cluster(k) = (e(:, j) - current_mu)' * K  * (e(:, j) - current_mu);
+            cluster(l) = (e(:, j) - mul)' * K * (e(:, j) - mul);
         end
         
         [~, y(j)] = min(cluster);
@@ -65,7 +67,6 @@ while(~STOP)
      for l  = 1 : k
          
          nl = sum(y == 1);
-         current_mu = mu(:, l);
          
          if (nl ~= 0)
              summation = 0;
@@ -75,16 +76,15 @@ while(~STOP)
                  summation = summation + (e(:,j) * (y(j) == l));
              end
              
-             current_mu = (1/nl) * summation;
+             mu(:, l) = (1/nl) * summation;
          else
-             current_mu = zeros(n, 1);
+             mu(:, l) = zeros(n, 1);
              
          end
 
      end
      
      % Stopping condition
-     iteration = iteration + 1;
      if(iteration > 50)
          STOP = true;
      end

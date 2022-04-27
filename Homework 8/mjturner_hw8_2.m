@@ -35,10 +35,14 @@ for t = 0 : 10 : t_max
     end
     
     % Find minimum gPsi
-    if(cost < min_cost)
-        min_cost = cost;
-        psi_svm = psi;
+    if(t >= 10)
+        
+        if(cost < min_cost)
+            min_cost = cost;
+            psi_svm = psi;
+        end
     end
+    
 end
    
 % Plot sample-normalized cost for each binary classifier
@@ -85,19 +89,22 @@ class2_pred = x(:,yj == -1);
 % Find the decision boundrary.  Where the decision between a pair of points
 % changes.
 boundrary = [];
-for j = 1 : n-1
+for j = 1 : n - 1
     
-    if(yj(j) ~= yj(j + 1))
-        boundrary = [boundrary x(:, j) x(:, j) ];
+    if( yj(j) ~= yj(j + 1) )
+        boundrary = [boundrary x(:, j) x(:, j)];
     end
 end
 
+if( isempty(boundrary) )
+    boundrary = [boundrary x(:, 1) x(:, 1)];
+end
 
 figure(3)
 hold on
 scatter(class1(1, :), class1(2,:),'b+')
 scatter(class2(1,:), class2(2,:),'gs')
-scatter(boundrary(1,:), boundrary(2,:),'mo', 'filled')
+scatter(boundrary(1,:), boundrary(2,:), 'filled', 'mo')
 title('Training set and decision boundary')
 xlabel('Class 1');
 ylabel('Class 2');

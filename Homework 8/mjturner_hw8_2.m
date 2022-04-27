@@ -13,31 +13,31 @@ C = 256 / n;
 sigma = 0.5;
 
 % Find K
-K = RBF(n, x, sigma); % Implemented not with rbf
+K = RBF(n, x, sigma);
 
-
-
-
-%% 8.2(a) Create a plot which shows how the sample-normalized cost evolves. [FIX]
+%% 8.2(a) Create a plot which shows how the sample-normalized cost evolves.
 
 % Find sample-normalized cost
 cost_array = [];
+psi_array = [];
 for t = 0 : 10 : t_max
     
     % Find psi
     psi = SSGD(x, y, K, t, C);
+    psi_array = [psi_array psi];
     
     % Find cost
     cost = (1 / n) * costFunction(psi, K, y, n, C);
     cost_array = [cost_array cost];
-    if(t == 0)
+    if(t == 10)
         min_cost = cost;
+        psi_svm = psi;
     end
     
     % Find minimum gPsi
     if(cost < min_cost)
         min_cost = cost;
-        min_psi = psi;
+        psi_svm = psi;
     end
 end
    
@@ -53,9 +53,12 @@ end
  
 % Find the training CCR
 ccr_training = [];
+j = 1;
 for t = 0 : 10 : t_max
-    [ccr, yj] = CCR(x, y, psi);
+    currentPsi = psi_array(:, j);
+    [ccr, yj] = CCR(x, y, currentPsi, n);
     ccr_training = [ccr_training ccr];
+    j = j + 1;
 end
    
 % Plot training ccr
@@ -66,40 +69,58 @@ end
     xlabel('t')
     ylabel('Training CCR')
     
-%% 8.2(c) Report the Final training confusion matrix [NEED TO IMPLEMENT]
+%% 8.2(c) Report the Final training confusion matrix
+
+fprintf('\n Training Confusion matrix \n')
+confusionmatTraining = confusionmat(y, yj);
+disp(confusionmatTraining)
 
 
-%% 8.2(d) Visualization of Decision Boundrary
+%% 8.2(d) Visualization of Decision Boundrary [HAVING TROUBLE]
+class1 = x(:,y == 1);
+class2 = x(:,y == -1);
+class1_pred = x(:,yj == 1);
+class2_pred = x(:,yj == -1);
 
-    figure(3)
-    hold on
-    % Plot the training set
-    scatterplot(x(:, 1), y)
-    scatterplot(x(:, 2), y)
-    % Plot the decision boundrary [NEED TO IMPLEMENT]
-    plotName = sprintf('Visualization of Decision Boundrary');
-    title(plotName)
-    legend('Class 1','Class 2', 'Decision Boundrary')
-    hold off
+% Find the decision boundrary.  Where the decision between a pair of points
+% changes.
+boundrary = [];
+for j = 1 : n-1
+    
+    if(yj(j) ~= yj(j + 1))
+        boundrary = [boundrary x(:, j) x(:, j) ];
+    end
+end
 
+
+figure(3)
+hold on
+scatter(class1(1, :), class1(2,:),'b+')
+scatter(class2(1,:), class2(2,:),'gs')
+scatter(boundrary(1,:), boundrary(2,:),'mo', 'filled')
+title('Training set and decision boundary')
+xlabel('Class 1');
+ylabel('Class 2');
+plotName = sprintf('Visualization of Decision Boundrary');
+title(plotName)
+legend('Class 1','Class 2', 'Decision Boundrary')
+hold off
 
 %% Functions
 
-% Radial Basis Function (RBF) Kernel % Implemented wrong, need to [FIX]
+% Radial Basis Function (RBF) Kernel
 function K = RBF(n, x, sigma)
 
 % Find the kernel for each pair of feature vectors
 % Let K be a n x n matrix
 K = zeros(n);
-X_transposed = x';
-X = x;
 
-% for i = 1 : n
-%     j = i;
-%     K(i,j) = exp( (- 1 / (2 * sigma^2)) * norm(X_transposed(i,:) - X(:,j ).^ 2) );
-% end
+for j = 1 : n
+    for i = 1 : n
+        K(i, j) = exp( (- 1 / (2 * sigma^2)) *  ( norm( x(:,i) - x(:, j)) ).^ 2 );
+    end
+end
 
-K = x' * x;
 end
 
 % Hinge Function
@@ -171,12 +192,22 @@ gPsi = f0 + fj;
 
 end
 
-function [ccr, yj] = CCR(x, y, psi)
+% Decision Rule and CCR
+function [ccr, yj] = CCR(x, y, psi, n)
 
-% Find CCR of the training set
-% Get K of xtest
-Kxtest = x' * x(:,1);
-% Creating Kj extended with a 1
-Kxtest_ext = [Kxtest; 1];
-yj = sign(psi' * Kxtest_ext);
+% Initialize variables
+yj = zeros(n, 1);
+
+% Find decision rule for the training set
+for j = 1 : n
+    
+    % Get K of xtest [MIGHT NEED TO BE RBF[
+    Kxtest = x' * x(:, j);
+    Kxtest_ext = [Kxtest; 1];
+    yj(j) = sign(psi' * Kxtest_ext);
+    
+end
+
+% CCR
+ccr = (1 / n) * sum(y == yj);
 end

@@ -13,9 +13,6 @@ e = eye(n);
 sigma = 0.4;
 k = 2;
 
-% Find K
-K = RBF(n, X, sigma);
-
 % Run kernel k means
 kernel_kmeans(X, k, K, n, d, e)
 
@@ -57,7 +54,7 @@ while(~STOP)
             cluster(k) = (e(:, j) - current_mu)' * K  * (e(:, j) - current_mu);
         end
         
-        [~, y(j)] = min(cluster);
+        [~, y] = min(cluster);
         
     end
     
@@ -88,13 +85,16 @@ while(~STOP)
      if(iteration > 50)
          STOP = true;
      end
+     
+     figure(1)
+     gscatter(X(1,:),X(2,:),Y)
+    title('Kernel K-means ')
+    xlabel('x1')
+    ylabel('x2')
+    
 end
 
-     figure(1)
-     gscatter(X(1,:),X(2,:),y)
-     title('Kernel k-means clustering')
-     xlabel('Class 1')
-     ylabel('Class 2')
+
 end
 
 % Radial Basis Function (RBF) Kernel
